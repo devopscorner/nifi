@@ -1,0 +1,55 @@
+/*
+jenkinsNode (default: master)
+<strong>Selected Nodes:</strong>
+<br>* master
+<br>* worker-backend
+<br>* worker-frontend
+*/
+
+node(jenkinsNode) {
+    stage('Cleanup Container'){
+        sh '''
+            export TERM=xterm
+            echo "============================================="
+            echo "    --- CLEANUP UNUSED DOCKER IMAGES ----    "
+            echo "============================================="
+            echo " Start At: `date` "
+            echo "============================================="
+
+            LIST_CONTAINER=`docker ps -a -q`
+            LIST_IMAGES=`docker images -q -f dangling=true`
+
+            if [ "$LIST_CONTAINER" != "" ]
+            then
+                for CONTAINER in $LIST_CONTAINER
+                do
+                    echo "---------------------------------------------"
+                    echo " Remove Container $CONTAINER "
+                    echo " command: docker rm -f $CONTAINER "
+                    echo "---------------------------------------------"
+                    docker rm -f $CONTAINER
+                    echo ""
+                done
+            else
+                echo "Container NOT FOUND ..."
+            fi
+
+            if [ "$LIST_IMAGES" != "" ]
+            then
+                for IMAGE in $LIST_IMAGES
+                do
+                    echo "---------------------------------------------"
+                    echo " Remove Image $IMAGE "
+                    echo " command: docker rmi -f $IMAGE "
+                    echo "---------------------------------------------"
+                    docker rmi $IMAGE
+                    echo ""
+                done
+            else
+                echo "Image NOT FOUND ..."
+            fi
+
+            echo " - DONE - "
+        '''
+    }
+}

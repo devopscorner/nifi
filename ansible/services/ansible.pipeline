@@ -1,0 +1,53 @@
+def GITHUB_REPO = 'https://github.com/devopscorner/nifi'
+
+node(jenkinsNode) {
+    parameters {
+        string(name: 'CICD_ANSIBLE_SERVICE', defaultValue: 'nifi', description: 'Enter Service Name')
+        string(name: 'CICD_ANSIBLE_ENVIRONMENT', defaultValue: 'staging', description: 'Enter Ansible Environment')
+        string(name: 'CICD_ANSIBLE_INVENTORY', defaultValue: 'inventory.ini', description: 'Enter Inventory Ansible (inventory static/dynamic)')
+        string(name: 'CICD_ANSIBLE_PLAYBOOKS', defaultValue: 'service-nifi.yaml', description: 'Enter Ansible Playbooks Name (eg: service-[name_service].yaml)')
+        string(name: 'CICD_ANSIBLE_HOSTS', defaultValue: 'nifi-public-ip', description: 'Enter Ansible Deploy Host Target (eg: nifi / nifi-public-ip / nifi-private-ip)')
+        string(name: 'CICD_ANSIBLE_REMOTE_USER', defaultValue: 'ec2-user', description: 'Enter Ansible Remote User (eg: ec2-user / ubuntu / root)')
+        string(name: 'CICD_ANSIBLE_PEM_KEY', defaultValue: '/opt/keyserver/devops-staging.pem', description: 'Enter Ansible Key Access (eg: devops-staging.pem)')
+        string(name: 'CICD_ANSIBLE_ARGS', defaultValue: '-v', description: 'Enter Ansible Arguments (eg: -vvv)')
+    }
+    stage('Clone'){
+        git branch: 'develop', credentialsId: 'github', url: GITHUB_REPO
+        commitID = sh(returnStdout: true, script: '''
+            git log -n 1 --pretty=format:'%h'
+        ''').trim()
+    }
+    stage('Install Python Requirements'){
+        sh '''
+        pip3 install -r requirements.txt --user
+        '''
+    }
+    stage('Install Ansible Dependencies'){
+        sh '''
+        ansible-galaxy install -r roles/requirements.yml
+        '''
+    }
+    stage('Ansible Running Playbooks'){
+        withEnv([
+            "service_name=$CICD_ANSIBLE_SERVICE",
+            "ansible_env=$CICD_ANSIBLE_ENVIRONMENT",
+            "ansible_inv=$CICD_ANSIBLE_INVENTORY",
+            "ansible_playbooks=$CICD_ANSIBLE_PLAYBOOKS",
+            "ansible_hosts=$CICD_ANSIBLE_HOSTS",
+            "ansible_remote_user=$CICD_ANSIBLE_REMOTE_USER",
+            "ansible_keys=$CICD_ANSIBLE_PEM_KEY",
+            "ansible_args=$CICD_ANSIBLE_ARGS"
+        ]) {
+            sh '''
+                export TERM=xterm
+                export PATH_SCRIPT=`pwd`
+                ansible-playbook -i services/$service_name/ansible/inventory/$ansible_env/group_vars/$ansible_inv playbooks/$service_name/$ansible_playbooks \
+                    -e "deploy_hosts=$ansible_hosts" \
+                    -e "env=$ansible_env" \
+                    -e "remote_user=$ansible_remote_user" \
+                    --private-key=$ansible_keys \
+                    -K $ansible_args
+            '''
+        }
+    }
+}

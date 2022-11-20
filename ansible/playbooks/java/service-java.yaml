@@ -1,0 +1,13 @@
+---
+- name: Install Java
+  hosts: "{{ deploy_hosts }}"
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  tasks:
+    - name: Include Cluster Vars
+      include_vars:
+        file: "../../services/java/ansible/inventory/{{ env }}/group_vars/metadata_java.yaml"
+
+  roles:
+    - java

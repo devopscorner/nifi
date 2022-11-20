@@ -1,0 +1,4 @@
+---
+cli_dependencies_packages:
+  - python3-setuptools
+  - python3-pip

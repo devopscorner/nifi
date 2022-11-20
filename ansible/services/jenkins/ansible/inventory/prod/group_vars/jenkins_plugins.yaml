@@ -1,0 +1,4 @@
+jenkins_plugins: []
+#  - blueocean
+#  - name: influxdb
+#    version: "1.12.1"

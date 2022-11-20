@@ -1,0 +1,58 @@
+def GITHUB_REPO = 'https://github.com/devopscorner/nifi'
+
+node(jenkinsNode) {
+    parameters {
+        string(name: 'CICD_TERRAFORM_SERVICE', defaultValue: 'nifi', description: 'Enter Service Name')
+        string(name: 'CICD_TERRAFORM_ENVIRONMENT', defaultValue: 'staging', description: 'Enter Terraform Environment')
+        string(name: 'CICD_TERRAFORM_STATE', defaultValue: 'plan', description: 'Enter Terraform State (init, validate, plan, apply, destroy)')
+        string(name: 'CICD_TERRAFORM_ARGS', defaultValue: '', description: 'Enter Terraform Arguments (eg: -migrate-state)')
+    }
+    stage('Clone'){
+        git branch: 'develop', credentialsId: 'support@devopscorner.id', url: GITHUB_REPO
+        commitID = sh(returnStdout: true, script: '''
+            git log -n 1 --pretty=format:'%h'
+        ''').trim()
+    }
+    stage('Change Terraform Version'){
+        sh '''
+            export TERM=xterm
+            export PATH_SCRIPT=`pwd`
+            tfenv use 1.3.5
+        '''
+    }
+    stage('Terraform Init Migrate'){
+        withEnv([
+            "service_name=$CICD_TERRAFORM_SERVICE",
+            "tf_env=$CICD_TERRAFORM_ENVIRONMENT",
+            "tf_state=init",
+            "tf_args=--migrate-state"
+        ]) {
+            dir("services"){
+                sh '''
+                    export TERM=xterm
+                    export PATH_SCRIPT=`pwd`
+                    cp terraform-jenkins.sh $service_name/terraform/$tf_env
+                    cd $service_name/terraform/$tf_env
+                    sh terraform-jenkins.sh $tf_env $tf_state $tf_args
+                '''
+            }
+        }
+    }
+    stage('Terraform Execute State'){
+        withEnv([
+            "service_name=$CICD_TERRAFORM_SERVICE",
+            "tf_env=$CICD_TERRAFORM_ENVIRONMENT",
+            "tf_state=$CICD_TERRAFORM_STATE",
+            "tf_args=$CICD_TERRAFORM_ARGS"
+        ]) {
+            dir("services"){
+                sh '''
+                    export TERM=xterm
+                    export PATH_SCRIPT=`pwd`
+                    cd $service_name/terraform/$tf_env
+                    sh terraform-jenkins.sh $tf_env $tf_state $tf_args
+                '''
+            }
+        }
+    }
+}

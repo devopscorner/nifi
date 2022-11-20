@@ -1,0 +1,58 @@
+- name: Copy file dependecies to systemd
+  copy:
+    src: "dependencies/{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0771
+  become: yes
+  with_items:
+    - datadog-mute-alert.service
+    - datadog-unmute-alert.service
+
+- name: Copy file mute script to sbin
+  template:
+    src: datadog-mute-alert.sh.j2
+    dest: "/usr/local/sbin/datadog-mute-alert.sh"
+    owner: root
+    group: root
+    mode: 0710
+  become: yes
+
+- name: Copy file unmute script to sbin
+  template:
+    src: datadog-unmute-alert.sh.j2
+    dest: "/usr/local/sbin/datadog-unmute-alert.sh"
+    owner: root
+    group: root
+    mode: 0710
+  become: yes
+
+- name: Activate datadog mute alert service
+  systemd:
+    daemon_reload: yes
+    name: "{{ item }}"
+    enabled: yes
+    masked: no
+  become: yes
+  with_items:
+    - datadog-mute-alert
+    - datadog-unmute-alert
+
+- name: Activate datadog unmute alert service
+  systemd:
+    name: datadog-unmute-alert
+    enabled: yes
+    masked: no
+
+- name: restart service datadog mute alert, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: datadog-mute-alert
+
+- name: restart service datadog unmute alert, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: datadog-unmute-alert

@@ -1,0 +1,27 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 86400
+  tags:
+    - update-cache
+
+- name: Install cli_dependencies_packages dependencies
+  apt:
+    name: "{{ cli_dependencies_packages }}"
+    state: present
+    force: true
+  register: package_ok
+  retries: "{{ cli_global_downloads_retries }}"
+  delay: "{{ cli_global_downloads_delay }}"
+  until: package_ok is success
+  tags:
+    - install
+
+- name: Install {{ cli_package }}
+  pip:
+    name: "{{ cli_package }}"
+    state: present
+    executable: pip3
+  tags:
+    - install

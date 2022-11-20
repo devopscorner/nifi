@@ -1,0 +1,25 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+  tasks:
+    - name: "Include christiangda.epel_repo"
+      include_role:
+        name: christiangda.epel_repo
+
+  roles:
+    - role: christiangda.epel_repo
+      when: >
+        ansible_os_family == 'RedHat' and (
+          ansible_distribution == 'CentOS' or
+          ansible_distribution == 'RedHat' or
+          ansible_distribution == 'Amazon'
+        )
+      changed_when: false
+    - role: christiangda.awscli

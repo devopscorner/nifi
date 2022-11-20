@@ -1,0 +1,155 @@
+/*
+jenkinsNode (default: master)
+<strong>Selected Nodes:</strong>
+<br>* master
+<br>* worker-backend
+<br>* worker-frontend
+*/
+
+node(jenkinsNode) {
+    stage('Java Installation'){
+        sh '''
+            echo "================================"
+            echo " JAVA JAR Version"
+            echo "================================"
+            java -jar -version
+            echo ""
+            echo "================================"
+            echo " JAVA Compiler Version"
+            echo "================================"
+            javac -version
+            echo ""
+            echo "================================"
+            echo " JAVA Version"
+            echo "================================"
+            java -version
+            echo ""
+        '''
+    }
+    stage('Jenkins Installation'){
+        sh '''
+            echo "================================"
+            echo " JENKINS Version"
+            echo "================================"
+            java -jar /usr/share/jenkins/jenkins.war --version
+            echo ""
+        '''
+    }
+    stage('Docker Installation'){
+        sh '''
+            echo "================================"
+            echo " DOCKER Version"
+            echo "================================"
+            docker version
+            echo ""
+
+            echo "================================"
+            echo " DOCKER COMPOSE Version "
+            echo "================================"
+            docker-compose version
+        '''
+    }
+    stage('Golang Installation'){
+        sh '''
+            echo "================================"
+            echo " GOLANG Environment "
+            echo "================================"
+            echo ">> GOPATH "
+            echo $GOPATH
+            echo ">> GOROOT "
+            echo $GOROOT
+            echo ">> GO111MODULE"
+            echo $GO111MODULE
+            echo ""
+
+            echo "========================"
+            echo " GOLANG Version         "
+            echo "========================"
+            go version
+        '''
+    }
+    stage('NodeJS Installation'){
+        sh '''
+            echo "================================"
+            echo " NodeJS Version"
+            echo "================================"
+            node -v
+            echo ""
+        '''
+    }
+    stage('Yarn Installation'){
+        sh '''
+            echo "================================"
+            echo " YARN Version"
+            echo "================================"
+            yarn -v
+            echo ""
+        '''
+    }
+    stage('AWS Cli Installation'){
+        sh '''
+            echo "================================"
+            echo " AWS CLI Version"
+            echo "================================"
+            aws --version
+            echo ""
+        '''
+    }
+    stage('Helm Installation'){
+        sh '''
+            echo "================================"
+            echo " HELM Version"
+            echo "================================"
+            helm version
+            echo ""
+            echo "================================"
+            echo " HELMFILE Version"
+            echo "================================"
+            helmfile -v
+        '''
+    }
+    stage('Helm Update Repo'){
+        sh '''
+            echo "================================"
+            echo " HELM List Repo"
+            echo "================================"
+            helm repo ls
+            echo ""
+            echo "================================"
+            echo " HELM Update Repo"
+            echo "================================"
+            helm repo update
+        '''
+    }
+    stage('Python3 Installation'){
+        sh '''
+            echo "================================"
+            echo " PYTHON Version"
+            echo "================================"
+            python3 --version
+            echo ""
+            echo "================================"
+            echo " PIP3 Version"
+            echo "================================"
+            pip3 -V
+        '''
+    }
+    stage('Terraform List Version'){
+        sh '''
+            echo "================================"
+            echo " TERRRAFORM List Version"
+            echo "================================"
+            tfenv list
+            echo ""
+        '''
+    }
+    stage('Terraform Installation'){
+        sh '''
+            echo "================================"
+            echo " TERRRAFORM Version"
+            echo "================================"
+            terraform version
+            echo ""
+        '''
+    }
+}

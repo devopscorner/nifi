@@ -1,0 +1,5 @@
+---
+cli_package: awscli
+
+cli_global_downloads_retries: 5
+cli_global_downloads_delay: 2

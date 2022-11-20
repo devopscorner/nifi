@@ -1,0 +1,9 @@
+- name: datadog update tags
+  uri:
+    url: "https://api.datadoghq.com/api/v1/tags/hosts/{{ ansible_fqdn }}?api_key={{ datadog_api_key }}&application_key={{ datadog_app_key }}"
+    method: PUT
+    body_format: json
+    headers:
+      Content-type: "application/json"
+    body: {"tags" : ["env:{{ env }}", "tribe:{{ tribe }}", "squad:{{ squad }}", "location:aws", "service:{{ service | default('') }}"]}
+    status_code: 200, 201, 202, 204

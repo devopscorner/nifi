@@ -1,0 +1,10 @@
+---
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# - name: Install Python 3.x
+#   raw: test -e /usr/bin/python || (apt-get -y update && apt-get install -y python3-minimal)

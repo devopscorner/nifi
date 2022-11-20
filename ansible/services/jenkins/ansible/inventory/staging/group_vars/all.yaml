@@ -1,0 +1,10 @@
+---
+### GENERAL VARIABLES
+squad                : devops
+tribe                : infra
+env                  : staging
+pic                  : devops
+region               : ap-southeast-1
+subnetwork           : "{{ infra_vm_subnet }}"
+image_instance_zone  : ap-southeast-1a
+run_type             : services

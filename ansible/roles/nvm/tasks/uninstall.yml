@@ -1,0 +1,12 @@
+---
+- name: Copy uninstall script
+  copy: src="{{ item }}.sh" dest="/tmp/{{ item }}.sh"
+  with_items:
+    - uninstall
+  tags: uninstall_node
+
+- name: Remove all old nodejs
+  shell: bash /tmp/{{ item }}.sh
+  with_items:
+    - uninstall
+  tags: uninstall_node

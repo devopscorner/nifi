@@ -1,0 +1,15 @@
+init_config:
+
+instances:
+{% for checks in tcp_monitoring_check_list %}
+
+- name: {{ checks.check_name }}
+  host: {{ checks.check_host }}
+  port: {{ checks.check_port }}
+  collect_response_time: {{ checks.check_collect_response_time | default('false') }}
+  timeout: {{ checks.check_timeout | default('5') }}
+  tags:
+  {% for check_tag in checks.check_tags %}
+  - {{ check_tag }}
+  {% endfor %}
+{% endfor %}

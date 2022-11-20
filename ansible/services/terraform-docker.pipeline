@@ -1,0 +1,105 @@
+def GITHUB_REPO = 'https://github.com/devopscorner/nifi'
+def VERSION = 'latest'
+def ECR_REPO = 'YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner-terraform-devops'
+def needBuild = false
+
+node {
+    parameters {
+        string(name: 'CICD_TERRAFORM_BUILD_IMAGE', description: 'Build latest image or using existing latets image')
+    }
+    stage('Init'){
+        def dockerHome = tool 'docker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
+        cleanWs()
+    }
+    stage('Clone'){
+       checkout([$class: 'GitSCM', branches: [[name: '*/develop']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 2, noTags: false  , reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: GITHUB_REPO]]])
+    }
+    stage('Image Build'){
+        withEnv([
+            "build_image=$CICD_TERRAFORM_BUILD_IMAGE"
+        ]) {
+        if (build_image == "yes") {
+            needBuild = true
+        }
+        }
+    }
+    script{
+        if (needBuild == true) {
+            println 'Build Docker Image'
+            // commitID = sh(returnStdout: true, script: 'echo $commit_id')
+            // commitID = commitID.substring(0,6)
+            stage('Build Docker'){
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "devopscorner-terraform",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh ''' docker build -t '''+ ECR_REPO +''' \
+                    --build-arg _AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+                    --build-arg _AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                    --build-arg _AWS_DEFAULT_REGION=ap-southeast-1  \
+                    -f services/terraform.Dockerfile .
+
+                    '''
+                }
+            }
+            stage('Push to Repo'){
+                withDockerRegistry(credentialsId: 'ecr:ap-southeast-1:devops', toolName: 'docker', url: 'https://'+ECR_REPO) {
+                    docker.image(ECR_REPO).push(VERSION)
+                }
+            }
+        } else {
+            println 'Nothing to build'
+        }
+    }
+    stage('Clean Master Node'){
+        cleanWs()
+
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+            sh '''
+                sudo docker rmi -f $(sudo docker images | grep ''' + ECR_REPO + ''' | awk '{print $3}')
+                sudo docker rmi -f $(sudo docker images --filter="dangling=true" -q --no-trunc)
+            '''
+        }
+    }
+}
+
+node('worker-devops-cicd') {
+    parameters {
+        string(name: 'CICD_TERRAFORM_SERVICE', defaultValue: 'airflow', description: 'Enter Service Name')
+        string(name: 'CICD_TERRAFORM_ENVIRONMENT', defaultValue: 'staging', description: 'Enter Terraform Environment')
+        string(name: 'CICD_TERRAFORM_STATE', defaultValue: 'plan', description: 'Enter Terraform State (init, validate, plan, apply, destroy)')
+        string(name: 'CICD_TERRAFORM_NAME', defaultValue: 'autoshutdown', description: 'Enter Terraform Folder Name')
+        string(name: 'CICD_TERRAFORM_ARGS', defaultValue: '', description: 'Enter Terraform Arguments (eg: -migrate-state)')
+    }
+
+    stage('Clone'){
+        git branch: 'develop', credentialsId: 'github', url: GITHUB_REPO
+        commitID = sh(returnStdout: true, script: '''
+            git log -n 1 --pretty=format:'%h'
+        ''').trim()
+    }
+
+    stage('Terraform init'){
+        withEnv([
+            "terraform_folder=$CICD_TERRAFORM_NAME",
+            "terraform_state=$CICD_TERRAFORM_STATE",
+            "terraform_args=$CICD_TERRAFORM_ARGS"
+        ]) {
+        sh '''
+                aws ecr get-login-password --region ap-southeast-1 > a.txt
+                sh ecr-login.sh
+                rm a.txt
+            '''
+
+
+        sh '''
+                docker run --rm -v $(pwd)/services/terraform/$terraform_folder:/terraform ''' + ECR_REPO + ''':latest $terraform_state $terraform_args
+            '''
+        }
+    }
+}
+
+

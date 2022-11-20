@@ -1,0 +1,10 @@
+[Unit]
+Description=mute alert on host when shutdown
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStop=/usr/local/sbin/datadog-mute-alert.sh
+
+[Install]
+WantedBy=multi-user.target

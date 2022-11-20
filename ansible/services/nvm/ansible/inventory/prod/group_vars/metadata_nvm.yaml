@@ -1,0 +1,8 @@
+---
+app_name:          nodejs
+microservice_name: nodejs
+run_type:          services
+env:               prod
+
+### NodeJS ###
+nodejs_version:    "16.13.0"

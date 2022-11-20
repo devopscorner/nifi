@@ -1,0 +1,29 @@
+/*
+jenkinsNode (default: master)
+<strong>Selected Nodes:</strong>
+<br>* master
+<br>* worker-backend
+<br>* worker-frontend
+*/
+
+node(jenkinsNode) {
+    parameters {
+        string(name: 'JENKINS_CMD', defaultValue: 'ls -al', description: 'Enter Your Command')
+    }
+    stage('Running Command'){
+        withEnv([
+            "jenkins_cmd=$JENKINS_CMD"
+        ]) {
+            sh '''
+                export TERM=xterm
+                export PATH_SCRIPT=`pwd`
+                echo "============================================="
+                echo "    --- Jenkins Running Command ----    "
+                echo "============================================="
+                echo " Start At: `date` "
+                echo "============================================="
+            '''
+            sh "$jenkins_cmd"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+---
+app_name:          docker
+microservice_name: docker
+run_type:          services
+env:               staging
+
+### Docker ###
+docker_edition:    ce
+docker_channel:    ["stable"]
+docker_version:    "20.10.21"
+docker_compose_version: "2.12.2"

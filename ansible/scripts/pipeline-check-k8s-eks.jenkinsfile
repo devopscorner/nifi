@@ -1,0 +1,41 @@
+/*
+jenkinsNode (default: master)
+<strong>Selected Nodes:</strong>
+<br>* master
+<br>* worker-backend
+<br>* worker-frontend
+*/
+
+def PATH_KUBECONFIG = '/home/ubuntu/.kube/config'
+
+node(jenkinsNode) {
+    withEnv(["KUBECONFIG=$PATH_KUBECONFIG"]) {
+        stage('Kubectl Installation'){
+            sh '''
+                echo "================================"
+                echo " Kubectl Version"
+                echo "================================"
+                kubectl version
+                echo ""
+            '''
+        }
+        stage('Check K8S DEV Staging'){
+            sh '''
+                echo "================================"
+                echo " Check K8S DEV Staging"
+                echo "================================"
+                kubectl config use-context arn:aws:eks:ap-southeast-1:YOUR_AWS_ACCOUNT:cluster/KUBE_DEV_CLUSTER_STAGING
+                kubectl get ns -A
+            '''
+        }
+        stage('Check K8S UAT Staging'){
+            sh '''
+                echo "================================"
+                echo " Check K8S UAT Staging"
+                echo "================================"
+                kubectl config use-context arn:aws:eks:ap-southeast-1:YOUR_AWS_ACCOUNT:cluster/KUBE_UAT_CLUSTER_STAGING
+                kubectl get ns -A
+            '''
+        }
+    }
+}

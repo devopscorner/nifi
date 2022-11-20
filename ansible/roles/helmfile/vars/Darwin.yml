@@ -1,0 +1,2 @@
+---
+helmfile_platform: darwin_amd64 # darwin_amd64

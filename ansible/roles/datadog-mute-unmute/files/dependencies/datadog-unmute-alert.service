@@ -1,0 +1,13 @@
+[Unit]
+Description=unmute alert on datadog host when startup
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/datadog-unmute-alert.sh                                                                       
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+---
+app_name:          java
+microservice_name: java
+run_type:          services
+env:               prod
+
+### Java ###
+java_home:         "/usr/lib/jvm"
+java_packages:     "openjdk-11-jdk"

@@ -1,0 +1,11 @@
+datadog
+requests
+PyYaml==5.3
+python-dateutil
+google-auth
+google-auth-httplib2
+google-api-python-client
+setuptools
+pip
+virtualenv
+docker-compose

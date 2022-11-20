@@ -1,0 +1,85 @@
+---
+- name: Install dbus package
+  apt:
+    name:
+      - dbus
+  tags: common
+
+# http://serverfault.com/a/567488
+- name: Install package without starting the associated service
+  copy:
+    src: policy-rc.d
+    dest: /usr/sbin/policy-rc.d
+    owner: root
+    group: root
+    mode: 0755
+  tags: common
+
+- name: Enable history search with page up and down
+  lineinfile:
+    dest: /etc/inputrc
+    regexp: '{{ item.command }}'
+    line: '{{ item.key }}: {{ item.command }}'
+  with_items:
+    - { "key": '"\e[5~"', "command": "history-search-backward" }
+    - { "key": '"\e[6~"', "command": "history-search-forward" }
+  tags: common
+
+- name: Install common packages
+  apt:
+    name:
+      - bash-completion
+      - bmon
+      - dnsutils
+      - htop
+      - iftop
+      - iotop
+      - jq
+      - less
+      - net-tools
+      - nload
+      - nmon
+      - ntp
+      - rsync
+      - sysstat
+      - telnet
+      - lsof
+    state: latest
+  tags: common
+
+# On debian 9 with python2, when using the apt module for the first time, the
+# dirmngr package will be installed automatically along with python-apt:
+# https://github.com/ansible/ansible/blob/58238375b4b/lib/ansible/modules/packaging/os/apt.py#L931-L945
+#
+# On debian 9 with python3, as the python3-apt package was pre-installed, this
+# auto-install-by-ansible magic doesn't get triggered, and will result in error
+# when using the apt_key module, as described in:
+# https://blog.sleeplessbeastie.eu/2017/11/02/how-to-fix-missing-dirmngr/
+- name: Install dirmngr for the apt_key module
+  apt:
+    name: dirmngr
+    state: present
+  tags: common
+
+- name: tune system sysctl
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    reload: yes
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    sysctl_set: yes
+  loop: "{{ sysctl_settings }}"
+  when: enable_sysctl_tuning|bool
+  tags: sysctl
+
+- name: enable vm.overcommit_memory
+  sysctl:
+    name: vm.overcommit_memory
+    value: 1
+    reload: yes
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    sysctl_set: yes
+  when: enable_vm_overcommit_memory|bool
+  tags: sysctl

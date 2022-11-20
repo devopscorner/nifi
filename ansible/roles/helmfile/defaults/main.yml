@@ -1,0 +1,6 @@
+---
+# defaults file for abdennour.helmfile
+helmfile_mirror: https://github.com/roboll/helmfile/releases/download
+helmfile_version: v0.82.0
+helmfile_platform: linux_amd64 # darwin_amd64
+helmfile_bin_dir: /usr/local/bin

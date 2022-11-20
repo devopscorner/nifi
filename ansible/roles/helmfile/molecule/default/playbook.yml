@@ -1,0 +1,28 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: abdennour.helmfile
+
+  pre_tasks:
+  - name: helmfile stats is fetched
+    stat:
+      path: "{{ helmfile_bin_dir }}/helmfile"
+    register: stat_result
+    changed_when: false
+
+  - name: helmfile absence is verified
+    debug:
+      msg: helmfile does not exist yet
+    when: not stat_result.stat.exists
+  post_tasks:
+  - name: helmfile stats is fetched
+    stat:
+      path: "{{ helmfile_bin_dir }}/helmfile"
+    register: stat_result
+    changed_when: false
+
+  - name: helmfile existence is verified
+    debug:
+      msg: helmfile exists
+    when: stat_result.stat.exists

@@ -1,0 +1,15 @@
+---
+- name: Deploy Datadog Agent
+  hosts: "{{ deploy_hosts }}"
+  gather_facts: yes
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  vars:
+    app_name: datadog
+    datadog_api_key: "{{ DATADOG_API_KEY }}"
+    datadog_app_key: "{{ DATADOG_APP_KEY }}"
+    datadog_site: datadoghq.com
+
+  roles:
+    - datadog

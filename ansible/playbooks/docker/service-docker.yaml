@@ -1,0 +1,14 @@
+---
+- name: Install Docker & Docker Compose
+  hosts: "{{ deploy_hosts }}"
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  tasks:
+    - name: Include Cluster Vars
+      include_vars:
+        file: "../../services/docker/ansible/inventory/{{ env }}/group_vars/metadata_docker.yaml"
+
+  roles:
+    - python-pip
+    - docker

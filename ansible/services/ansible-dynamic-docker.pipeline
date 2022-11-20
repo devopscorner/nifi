@@ -1,0 +1,127 @@
+def VERSION = 'latest'
+def ECR_REPO = 'YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/ansible'
+def GITHUB_REPO = 'https://github.com/devopscorner/nifi.git'
+
+def needBuild = false
+def commitID = ''
+
+node {
+    parameters {
+        string(name: 'CICD_ANSIBLE_BUILD_IMAGE', description: 'Build latest image or using existing latets image')
+    }
+    stage('Init'){
+        def dockerHome = tool 'docker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
+        cleanWs()
+    }
+    stage('Clone'){
+       checkout([$class: 'GitSCM', branches: [[name: '*/ansible-dynamic']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 2, noTags: false  , reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: GITHUB_REPO]]])
+    }
+    stage('Image Build'){
+        withEnv([
+            "build_image=$CICD_ANSIBLE_BUILD_IMAGE"
+        ]) {
+            if (build_image == "yes") {
+                needBuild = true
+            }
+        }
+    }
+    script{
+        if (needBuild == true) {
+            println 'Build Docker Image'
+            // commitID = sh(returnStdout: true, script: 'echo $commit_id')
+            // commitID = commitID.substring(0,6)
+            stage('Build Docker'){
+
+                withCredentials(bindings: [[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "devopscorner-terraform",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+
+                    sh '''
+                        docker build -t '''+ ECR_REPO +''' \
+                        --build-arg _AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID \
+                        --build-arg _AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY \
+                        --build-arg _AWS_DEFAULT_REGION=ap-southeast-1  \
+                        -f ansible.Dockerfile .
+                    '''
+                }
+            }
+            stage('Push to Repo'){
+                withDockerRegistry(credentialsId: 'ecr:ap-southeast-1:devops', toolName: 'docker', url: 'https://'+ECR_REPO) {
+                    docker.image(ECR_REPO).push(VERSION)
+                }
+            }
+        } else {
+            println 'Nothing to build'
+        }
+    }
+    stage('Clean Master Node'){
+        cleanWs()
+
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+            sh '''
+                sudo docker rmi -f $(sudo docker images | grep ''' + ECR_REPO + ''' | awk '{print $3}')
+                sudo docker rmi -f $(sudo docker images --filter="dangling=true" -q --no-trunc)
+            '''
+        }
+    }
+}
+node('worker-devops-cicd') {
+    parameters {
+        string(name: 'CICD_ANSIBLE_SERVICE', description: 'Enter Service Name')
+        string(name: 'CICD_ANSIBLE_ENVIRONMENT', description: 'Enter Ansible Environment')
+        string(name: 'CICD_ANSIBLE_INVENTORY', description: 'Enter Inventory Ansible (inventory static/dynamic)')
+        string(name: 'CICD_ANSIBLE_PLAYBOOKS', description: 'Enter Ansible Playbooks Name (eg: service-[name_service].yaml)')
+        string(name: 'CICD_ANSIBLE_HOSTS', description: 'Enter Ansible Deploy Host Target (eg: nifi / nifi-public-ip / nifi-private-ip)')
+        string(name: 'CICD_ANSIBLE_REMOTE_USER', description: 'Enter Ansible Remote User (eg: ec2-user / ubuntu / root)')
+        string(name: 'CICD_ANSIBLE_PEM_KEY', description: 'Enter Ansible Key Access (eg: devops-staging.pem)')
+        string(name: 'CICD_ANSIBLE_ARGS', description: 'Enter Ansible Arguments (eg: -vvv)')
+    }
+    stage('Clone'){
+        git branch: 'ansible-dynamic', credentialsId: 'github', url: GITHUB_REPO
+        commitID = sh(returnStdout: true, script: '''
+            git log -n 1 --pretty=format:'%h'
+        ''').trim()
+    }
+    stage('Add pem file'){
+        withEnv([
+            "ansible_keys=$CICD_ANSIBLE_PEM_KEY"
+        ]) {
+            sh 'sudo mkdir -p ${WORKSPACE}/keys/key'
+            sh 'sudo cp /opt/keyserver/$ansible_keys ${WORKSPACE}/keys/key/$ansible_keys'
+            sh 'sudo chmod 600 keys/key/$ansible_keys'
+        }
+    }
+    stage('Ansible Running Playbooks'){
+        withEnv([
+            "service_name=$CICD_ANSIBLE_SERVICE",
+            "ansible_env=$CICD_ANSIBLE_ENVIRONMENT",
+            "ansible_inv=$CICD_ANSIBLE_INVENTORY",
+            "ansible_playbooks=$CICD_ANSIBLE_PLAYBOOKS",
+            "ansible_hosts=$CICD_ANSIBLE_HOSTS",
+            "ansible_remote_user=$CICD_ANSIBLE_REMOTE_USER",
+            "ansible_keys=$CICD_ANSIBLE_PEM_KEY",
+            "ansible_args=$CICD_ANSIBLE_ARGS"
+        ]) {
+
+            sh '''
+                aws ecr get-login-password --region ap-southeast-1 > a.txt
+                sh ecr-login.sh
+                rm a.txt
+            '''
+
+            sh '''
+                docker run --rm -v $(pwd):/ansible ''' + ECR_REPO + ''':latest \
+                -i services/$service_name/ansible/inventory/$ansible_env/group_vars/$ansible_inv \
+                -v playbooks/$service_name/$ansible_playbooks \
+                --key-file=keys/key/$ansible_keys
+            '''
+        }
+    }
+    stage('Clean Ansible Node'){
+        cleanWs()
+    }
+}

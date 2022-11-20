@@ -1,0 +1,16 @@
+---
+- name: Copy tcp_monitoring templates
+  template:
+    src: tcp_monitoring.yaml
+    dest: /etc/datadog-agent/conf.d/tcp_check.d/conf.yaml
+    mode: 0755
+    owner: root
+    group: root
+  tags: tcp-monitoring
+
+- name: Restart datadog agent service
+  systemd:
+    name: datadog-agent
+    state: restarted
+  tags: tcp-monitoring
+...

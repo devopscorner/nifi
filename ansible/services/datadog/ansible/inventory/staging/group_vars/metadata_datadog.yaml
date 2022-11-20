@@ -1,0 +1,38 @@
+---
+app_name:          datadog
+microservice_name: datadog
+run_type:          services
+env:               staging
+
+### Docker ###
+docker_edition:    ce
+docker_channel:    ["stable"]
+docker_version:    "20.10.21"
+docker_compose_version: "2.12.2"
+
+### Datadog ###
+datadog_api_key: "{{ DATADOG_API_KEY }}"
+datadog_app_key: "{{ DATADOG_APP_KEY }}"
+datadog_site: datadoghq.com
+
+datadog_config:
+  dd_url: https://app.datadoghq.com
+  api_key: "{{ DATADOG_API_KEY }}"
+  logs_enabled: false  # log collection is available on agent 6
+  process_config:
+    enabled: "true"
+  tags:
+    - "app:{{ microservice_name }}"
+    - "env:{{ env }}"
+    - "squad:{{ squad }}"
+    - "tribe:{{ tribe }}"
+    - service:datadog
+
+datadog_checks:
+  system_core:
+    init_config:
+    instances:
+    - {}
+  system_swap:
+    init_config:
+    instances: [{}]

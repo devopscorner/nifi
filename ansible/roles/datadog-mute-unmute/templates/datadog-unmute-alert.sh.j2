@@ -1,0 +1,8 @@
+#!/bin/bash
+
+app_key='{{ datadog_app_key }}'
+api_key='{{ datadog_api_key }}'
+
+unmute=$(curl -X POST -H 'Content-Type: application/json' "https://app.datadoghq.com/api/v1/host/{{ ansible_host }}/unmute?api_key=$api_key&application_key=$app_key")
+
+echo "$unmute"

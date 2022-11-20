@@ -1,0 +1,16 @@
+---
+- name: Install Docker & Docker Compose
+  hosts: "{{ deploy_hosts }}"
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  vars:
+    app_name: docker
+    docker_edition: ce
+    docker_channel: ["stable"]
+    docker_version: "{{ docker_version | default('20.10.21') }}"
+    docker_compose_version: "{{ docker_compose_version | default('2.12.2') }}"
+
+  roles:
+    - python-pip
+    - docker

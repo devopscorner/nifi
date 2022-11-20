@@ -1,0 +1,34 @@
+---
+# Check RedHat/CentOS epel repository
+- name: Check if epel_repo exist for RedHat/CentOS
+  shell: "yum repolist 2>/dev/null | grep 'epel' && echo 'true'|| echo 'false'"
+  args:
+    warn: false
+  register: is_epel_repo_installed
+  changed_when: false
+  tags:
+    - check-epel-repo
+
+# Define facts to manage epel repository
+- name: Fail when EPEL repository is not installed
+  fail:
+    msg: "EPEL repository is not installed, you could use 'christiangda.epel_repo' galaxy role in your playbook"
+  when: is_epel_repo_installed.stdout is search('false')
+
+- name: Install "{{ cli_dependencies_packages }}" dependencies from EPEL repository
+  yum:
+    name: "{{ cli_dependencies_packages }}"
+    state: present
+  register: package_ok
+  retries: "{{ cli_global_downloads_retries }}"
+  delay: "{{ cli_global_downloads_delay }}"
+  until: package_ok is success
+  tags:
+    - install
+
+- name: Install {{ cli_package }}
+  pip:
+    name: "{{ cli_package }}"
+    state: present
+  tags:
+    - install

@@ -1,0 +1,49 @@
+---
+### References:
+###   https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html
+
+plugin: aws_ec2
+
+aws_access_key: AWS_ACCESS_KEY
+aws_secret_key: AWS_SECRET_KEY
+
+# The values for profile, access key, secret key and token can be hardcoded like:
+boto_profile: aws_profile
+# or you could use Jinja as:
+# boto_profile: "{{ lookup('env', 'AWS_PROFILE') | default('aws_profile', true) }}"
+# Populate inventory with instances in these regions
+regions:
+  - ap-southeast-1
+
+filters:
+  # All instances with their `Environment` tag set to `dev`
+  # tag:Environment: dev
+
+  # All dev and QA hosts
+  tag:Environment:
+    - dev
+    - uat
+    - qa
+  instance.group-id: sg-xxxxxxxx
+
+# Ignores 403 errors rather than failing
+strict_permissions: False
+
+# Note: I(hostnames) sets the inventory_hostname. To modify ansible_host without modifying
+# inventory_hostname use compose (see example below).
+hostnames:
+  - tag:Name=Tag1,Name=Tag2  # Return specific hosts only
+  - tag:CustomDNSName
+  - dns-name
+  - name: 'tag:Name=Tag1,Name=Tag2'
+  - name: 'private-ip-address'
+    separator: '_'
+    prefix: 'tag:Name'
+
+# keyed_groups:
+#   - key: tags
+#     prefix: tag
+#   - prefix: instance_type
+#     key: instance_type
+#   - key: placement.region
+#     prefix: aws_region

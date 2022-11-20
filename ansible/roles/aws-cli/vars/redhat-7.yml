@@ -1,0 +1,5 @@
+---
+cli_dependencies_packages:
+  - python-pip
+  - python-pysocks
+  - python-setuptools

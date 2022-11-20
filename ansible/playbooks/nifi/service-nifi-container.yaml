@@ -1,0 +1,19 @@
+---
+- name: Setup Nifi Container
+  hosts: "{{ deploy_hosts | default('nifi-public-ip') }}"
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  tasks:
+    - name: Include Nifi Properties
+      include_vars:
+        file: "../../services/nifi/ansible/inventory/{{ env }}/group_vars/metadata_nifi_properties.yaml"
+    - name: Include Nifi Vars
+      include_vars:
+        file: "../../services/nifi/ansible/inventory/{{ env }}/group_vars/metadata_nifi.yaml"
+
+  roles:
+    - ansible-pretasks
+    - python-pip
+    - { role: java, tags: ["java"] }
+    - { role: docker, tags: ["docker"] }

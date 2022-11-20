@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+### Path NVM (NodeJS Version Manager) ###
+export NVM_ROOT="$HOME/.nvm"
+
+if [ -d "$NVM_ROOT" ]
+then
+  [ -s "$NVM_ROOT/nvm.sh" ] && . "$NVM_ROOT/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi

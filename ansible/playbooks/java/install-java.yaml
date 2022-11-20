@@ -1,0 +1,13 @@
+---
+- name: Install Java
+  hosts: "{{ deploy_hosts }}"
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  vars:
+    app_name: java
+    java_home:     "/usr/lib/jvm"
+    java_packages: "{{ java_packages | default('openjdk-11-jdk') }}"
+
+  roles:
+    - java

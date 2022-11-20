@@ -1,0 +1,14 @@
+---
+- name: Deploy Datadog Agent
+  hosts: "{{ deploy_hosts }}"
+  gather_facts: yes
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  tasks:
+    - name: Include Cluster Vars
+      include_vars:
+        file: "../../services/datadog/ansible/inventory/{{ env }}/group_vars/metadata_datadog.yaml"
+
+  roles:
+    - datadog

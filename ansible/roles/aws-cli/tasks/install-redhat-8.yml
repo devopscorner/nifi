@@ -1,0 +1,18 @@
+---
+- name: Install "{{ cli_dependencies_packages }}" dependencies
+  dnf:
+    name: "{{ cli_dependencies_packages }}"
+    state: present
+  register: package_ok
+  retries: "{{ cli_global_downloads_retries }}"
+  delay: "{{ cli_global_downloads_delay }}"
+  until: package_ok is success
+  tags:
+    - install
+
+- name: Install {{ cli_package }}
+  pip:
+    name: "{{ cli_package }}"
+    state: present
+  tags:
+    - install

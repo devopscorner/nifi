@@ -1,0 +1,5 @@
+---
+helmfile_name: helmfile_{{ helmfile_platform }} # helm-{{helmfile_version}}-{{helmfile_platform}}
+
+helmfile_url: '{{ helmfile_mirror }}/{{ helmfile_version }}/{{ helmfile_name }}'
+helmfile_install_file: '{{ helmfile_bin_dir }}/helmfile'

@@ -1,0 +1,13 @@
+---
+- name: Add dd-agent to docker group
+  hosts: "{{ deploy_hosts }}"
+  gather_facts: yes
+  remote_user: "{{ remote_user | default('ubuntu') }}"
+  become: yes
+
+  tasks:
+    - name: add dd-agent to docker group
+      user:
+        name: dd-agent
+        groups: docker
+        append: yes

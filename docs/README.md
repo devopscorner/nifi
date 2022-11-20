@@ -45,7 +45,7 @@ Container Nifi & Nifi Registry
 
 - Ansible Nifi
   - [Ansible Setup](README-Ansible.md)
-  - [Ansible Deployment](Deploye-Ansible.md)
+  - [Ansible Deployment](Deploy-Ansible.md)
 
 - Container Nifi
   - [Docker Compose](Docker-Compose-Nifi.md)

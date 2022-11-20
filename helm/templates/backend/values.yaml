@@ -1,0 +1,126 @@
+---
+replicaCount: 1
+
+secret:
+  enabled: false
+  name: "secret-backend"
+  mountPath: {}
+  subPath: {}
+  readOnly: true
+  data: {}
+
+configMap:
+  enabled: true
+  name: "config-backend"
+  mountPath: /app/core/config
+  readOnly: true
+  data:
+    .app.config.json : |-
+        {
+           "AppName": "Backend Helm Template",
+           "GRPCTimeout": 10,
+           "CacheExpiry": 300,
+           "CacheCleanup": 600,
+           "DefaultPageLimit": 3,
+           "ClientTimeout": 10
+        }
+
+image:
+  repository: devopscorner/cicd:alpine
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  namespace: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: ""
+      paths: []
+  tls: []
+
+application:
+  enabled: true
+  env:
+    - name: HELM_TEMPLATE_NAME
+      value: backend
+    - name: DB_HOST
+      value: db.internal.service
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_USER
+      value: postgres
+    - name: DB_NAME
+      value: db_name
+    - name: DB_PASS
+      valueFrom:
+        secretKeyRef:
+          key: db-pass
+          name: db-secret
+    - name: DB_TIMEOUT
+      value: "10"
+    - name: DB_IDLE_CONN
+      value: "2"
+    - name: DB_OPEN_CONN
+      value: "5"
+    - name: DB_CONN_LIFETIME
+      value: "600"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 64Mi
+  requests:
+    cpu: 100m
+    memory: 32Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  enabled: true
+  select:
+    node: "default"
+
+tolerations: []
+
+affinity: {}

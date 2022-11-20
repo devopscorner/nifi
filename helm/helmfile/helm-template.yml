@@ -1,0 +1,28 @@
+---
+repositories:
+  - name: devopscorner-lab
+    url: s3://devopscorner-helm-chart/lab
+
+templates:
+  default: &default
+    namespace: devops-tools
+    version: "1.4.0-rc"
+
+releases:
+  - name: nifi
+    chart: devopscorner-lab/api
+    values:
+      - ./nifi-values.yml
+    <<: *default
+
+  - name: nifi-registry
+    chart: devopscorner-lab/api
+    values:
+      - ./nifi-registry-values.yml
+    <<: *default
+
+  - name: zookeeper
+    chart: devopscorner-lab/backend
+    values:
+      - ./zookeeper-values.yml
+    <<: *default

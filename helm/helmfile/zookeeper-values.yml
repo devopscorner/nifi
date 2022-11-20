@@ -1,0 +1,98 @@
+replicaCount: 1
+
+secret:
+  enabled: false
+
+configMap:
+  enabled: true
+  name: "zookeeper-backend"
+  mountPath: /app/core/config
+  readOnly: true
+  data:
+    .app.config.json : |-
+      {
+          "AppName": "GO App",
+          "GRPCTimeout": 10,
+          "CacheExpiry": 300,
+          "CacheCleanup": 600,
+          "DefaultPageLimit": 3,
+          "ClientTimeout": 10
+      }
+    .env : |-
+      ALLOW_ANONYMOUS_LOGIN=yes
+
+image:
+  #repository: bitnami/zookeeper
+  repository: YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/zookeeper
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "zookeeper"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: zookeeper
+  namespace: nifi
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+container:
+  ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: ""
+      paths: []
+  tls: []
+
+application:
+  enabled: true
+  env:
+    - name: HELM_TEMPLATE_NAME
+      value: backend
+    - name: ALLOW_ANONYMOUS_LOGIN
+      value: 'yes'
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 300Mi
+  requests:
+    cpu: 100m
+    memory: 150Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  enabled: true
+  select:
+    node: "nifi"
+
+tolerations: []
+
+affinity: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}

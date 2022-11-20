@@ -1,0 +1,125 @@
+replicaCount: 1
+
+secret:
+  enabled: false
+
+configMap:
+  enabled: true
+  name: "nifi-registry-api"
+  mountPath: /app/core/config
+  readOnly: true
+  data:
+    .app.config.json : |-
+      {
+          "AppName": "GO App",
+          "GRPCTimeout": 10,
+          "CacheExpiry": 300,
+          "CacheCleanup": 600,
+          "DefaultPageLimit": 3,
+          "ClientTimeout": 10
+      }
+    .env : |-
+      LOG_LEVEL=INFO
+      NIFI_REGISTRY_DB_DIR=/opt/nifi-registry/nifi-registry-current/database
+      NIFI_REGISTRY_FLOW_PROVIDER=file
+      NIFI_REGISTRY_FLOW_STORAGE_DIR=/opt/nifi-registry/nifi-registry-current/flow_storage
+
+image:
+  #repository: devopscorner/nifi-registry
+  repository: YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/nifi-registry
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "nifi-registry"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: nifi-registry
+  namespace: nifi
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+container:
+  ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/cors-allow-methods: '*'
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/whitelist-source-range: 32.0.0.0/32
+  hosts:
+    - host: nifi-registry.nifi.svc.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: nifi-registry-api
+              servicePort: 80
+  tls: []
+
+
+application:
+  enabled: true
+  env:
+    - name: HELM_TEMPLATE_NAME
+      value: api
+    - name: LOG_LEVEL
+      value: INFO
+    - name: NIFI_REGISTRY_BASE_DIR
+      value: /opt/nifi-registry
+    - name: NIFI_REGISTRY_HOME
+      value: /opt/nifi-registry/nifi-registry-current
+    - name: NIFI_REGISTRY_DB_DIR
+      value: /opt/nifi-registry/nifi-registry-current/database
+    - name: NIFI_REGISTRY_FLOW_PROVIDER
+      value: file
+    - name: NIFI_REGISTRY_FLOW_STORAGE_DIR
+      value: /opt/nifi-registry/nifi-registry-current/flow_storage
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 300Mi
+  requests:
+    cpu: 100m
+    memory: 150Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  enabled: true
+  select:
+    node: "nifi"
+
+tolerations: []
+
+affinity: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}

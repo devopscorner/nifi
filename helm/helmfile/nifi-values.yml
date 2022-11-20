@@ -1,0 +1,136 @@
+replicaCount: 1
+
+secret:
+  enabled: false
+
+configMap:
+  enabled: true
+  name: "nifi-api"
+  mountPath: /app/core/config
+  readOnly: true
+  data:
+    .app.config.json : |-
+      {
+          "AppName": "GO App",
+          "GRPCTimeout": 10,
+          "CacheExpiry": 300,
+          "CacheCleanup": 600,
+          "DefaultPageLimit": 3,
+          "ClientTimeout": 10
+      }
+    .env : |-
+      NIFI_BASE_DIR=/opt/nifi
+      NIFI_HOME=/opt/nifi/nifi-current
+      NIFI_TOOLKIT_HOME=/opt/nifi/nifi-toolkit-current
+      NIFI_PID_DIR=/opt/nifi/nifi-current/run
+      NIFI_LOG_DIR=/opt/nifi/nifi-current/logs
+
+image:
+  #repository: devopscorner/nifi
+  repository: YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/nifi
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "nifi"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: nifi
+  namespace: nifi
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+container:
+  ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/cors-allow-methods: '*'
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/whitelist-source-range: 32.0.0.0/32
+  hosts:
+    - host: nifi.nifi.svc.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: nifi-api
+              servicePort: 80
+  tls: []
+
+
+application:
+  enabled: true
+  env:
+    - name: HELM_TEMPLATE_NAME
+      value: api
+    - name: NIFI_BASE_DIR
+      value: /opt/nifi
+    - name: NIFI_HOME
+      value: /opt/nifi/nifi-current
+    - name: NIFI_TOOLKIT_HOME
+      value: /opt/nifi/nifi-toolkit-current
+    - name: NIFI_PID_DIR
+      value: /opt/nifi/nifi-current/run
+    - name: NIFI_LOG_DIR
+      value: /opt/nifi/nifi-current/logs
+    - name: NIFI_WEB_HTTP_PORT
+      value: '8080'
+    - name: NIFI_CLUSTER_IS_NODE
+      value: 'true'
+    - name: NIFI_CLUSTER_NODE_PROTOCOL_PORT
+      value: '8082'
+    - name: NIFI_ZK_CONNECT_STRING
+      value: zookeeper.nifi.svc.cluster.local:2181
+    - name: NIFI_ELECTION_MAX_WAIT
+      value: '30 sec'
+    - name: NIFI_SENSITIVE_PROPS_KEY
+      value: '98765432101234567890A'
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 300Mi
+  requests:
+    cpu: 100m
+    memory: 150Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  enabled: true
+  select:
+    node: "nifi"
+
+tolerations: []
+
+affinity: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}

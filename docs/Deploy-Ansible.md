@@ -1,4 +1,24 @@
-# POC Deployment
+# DevOpsCorner Nifi - Ansible Deployment
+
+![all contributors](https://img.shields.io/github/contributors/devopscorner/nifi)
+![tags](https://img.shields.io/github/v/tag/devopscorner/nifi?sort=semver)
+![download all](https://img.shields.io/github/downloads/devopscorner/nifi/total.svg)
+![view](https://views.whatilearened.today/views/github/devopscorner/nifi.svg)
+![clone](https://img.shields.io/badge/dynamic/json?color=success&label=clone&query=count&url=https://github.com/devopscorner/nifi/blob/master/clone.json?raw=True&logo=github)
+![issues](https://img.shields.io/github/issues/devopscorner/nifi)
+![pull requests](https://img.shields.io/github/issues-pr/devopscorner/nifi)
+![forks](https://img.shields.io/github/forks/devopscorner/nifi)
+![stars](https://img.shields.io/github/stars/devopscorner/nifi)
+[![license](https://img.shields.io/github/license/devopscorner/nifi)](https://img.shields.io/github/license/devopscorner/nifi)
+
+Container Nifi & Nifi Registry
+
+- Provisioning with Terraform & Ansible
+- EC2 Docker Compose & Kubernetes (EKS)
+- Python3 & Libraries
+- Unified Machine Learning (ML) Framework with [Ivy](https://github.com/unifyai/ivy)
+
+---
 
 ## Jenkins
 

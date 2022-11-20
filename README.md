@@ -20,6 +20,14 @@ Container Nifi & Nifi Registry
 
 ---
 
+## Introduction to NIFI
+
+### NIFI Usecase
+
+- Apache NiFi Tutorial: What is NiFi? Architecture & Installation (guru99.com), go to [this](https://www.guru99.com/apache-nifi-tutorial.html) link
+- An Introduction to Apache NiFi, Use Cases and Best Practices (capgemini.github.io), go to [this](https://capgemini.github.io/development/introduction-nifi-best-practices) link
+- Apache NiFi - Designing a flow for a real use case - Digital Hub, go to [this](https://scc-digitalhub.github.io/platform/nifi-tutorial-gtfs) link
+
 ## Available Tags
 
 ### **NIFI**
@@ -28,6 +36,11 @@ Container Nifi & Nifi Registry
 |------------|------|
 | `devopscorner/nifi:latest` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/latest.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/latestpage=1&ordering=last_updated&name=latest) |
 | `devopscorner/nifi:1.18.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.18.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.18.0page=1&ordering=last_updated&name=1.18.0) |
+| `devopscorner/nifi:1.18` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.18.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.18page=1&ordering=last_updated&name=1.18) |
+| `devopscorner/nifi:1.17.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.17.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.17.0page=1&ordering=last_updated&name=1.17.0) |
+| `devopscorner/nifi:1.17` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.17.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.17page=1&ordering=last_updated&name=1.17) |
+| `devopscorner/nifi:1.16.3` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.16.3.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.16.3page=1&ordering=last_updated&name=1.16.3) |
+| `devopscorner/nifi:1.16` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.16.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/1.16page=1&ordering=last_updated&name=1.16) |
 
 ### **NIFI REGISTRY**
 
@@ -35,6 +48,11 @@ Container Nifi & Nifi Registry
 |------------|------|
 | `devopscorner/nifi-registry:latest` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/latest.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/latestpage=1&ordering=last_updated&name=latest) |
 | `devopscorner/nifi-registry:1.18.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.18.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.18.0page=1&ordering=last_updated&name=1.18.0) |
+| `devopscorner/nifi-registry:1.18` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.18.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.18page=1&ordering=last_updated&name=1.18) |
+| `devopscorner/nifi-registry:1.17.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.17.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.17.0page=1&ordering=last_updated&name=1.17.0) |
+| `devopscorner/nifi-registry:1.17` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.17.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.17page=1&ordering=last_updated&name=1.17) |
+| `devopscorner/nifi-registry:1.16.3` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.16.3.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.16.3page=1&ordering=last_updated&name=1.16.3) |
+| `devopscorner/nifi-registry:1.16` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.16.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/1.16page=1&ordering=last_updated&name=1.16.3) |
 
 ## Features
 
@@ -82,6 +100,7 @@ Container Nifi & Nifi Registry
 
 ## Documentation
 
+- Index Documentation, go to [this](docs/README.md) link
 - Ansible Documentation, go to [this](docs/README-Ansible.md) link
 - Deploy Ansible Nifi, go to [this](docs/Deploy-Ansible.md) link
 - Docker-Compose Nifi, go to [this](docs/Docker-Compose-Nifi.md) link

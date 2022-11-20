@@ -1,0 +1,69 @@
+FROM ubuntu:${UBUNTU_VERSION:-20.04}
+
+ARG BUILD_DATE
+ARG BUILD_VERSION
+ARG GIT_COMMIT
+ARG GIT_URL
+
+ENV VENDOR="DevOpsCornerId"
+ENV AUTHOR="DevOpsCorner.id <support@devopscorner.id>"
+ENV IMG_NAME="ubuntu"
+ENV IMG_VERSION="20.04"
+ENV IMG_DESC="Docker Image Ubuntu 20.04"
+ENV IMG_ARCH="amd64/x86_64"
+
+ENV UBUNTU_VERSION="20.04"
+
+LABEL maintainer="$AUTHOR" \
+      architecture="$IMG_ARCH" \
+      ubuntu-version="$UBUNTU_VERSION" \
+      org.label-schema.build-date="$BUILD_DATE" \
+      org.label-schema.name="$IMG_NAME" \
+      org.label-schema.description="$IMG_DESC" \
+      org.label-schema.vcs-ref="$GIT_COMMIT" \
+      org.label-schema.vcs-url="$GIT_URL" \
+      org.label-schema.vendor="$VENDOR" \
+      org.label-schema.version="$BUILD_VERSION" \
+      org.label-schema.schema-version="$IMG_VERSION" \
+      org.opencontainers.image.authors="$AUTHOR" \
+      org.opencontainers.image.description="$IMG_DESC" \
+      org.opencontainers.image.vendor="$VENDOR" \
+      org.opencontainers.image.version="$IMG_VERSION" \
+      org.opencontainers.image.revision="$GIT_COMMIT" \
+      org.opencontainers.image.created="$BUILD_DATE" \
+      fr.hbis.docker.base.build-date="$BUILD_DATE" \
+      fr.hbis.docker.base.name="$IMG_NAME" \
+      fr.hbis.docker.base.vendor="$VENDOR" \
+      fr.hbis.docker.base.version="$BUILD_VERSION"
+
+COPY rootfs /
+
+ENV DEBIAN_FRONTEND noninteractive
+
+USER root
+RUN apt -o APT::Sandbox::User=root update; sync
+RUN apt-get update; sync
+RUN apt-get install -y \
+      git \
+      bash \
+      curl \
+      wget \
+      apt-transport-https \
+      ca-certificates \
+      openssh-server \
+      openssh-client \
+      net-tools \
+      vim-tiny \
+      nano \
+      zip \
+      unzip \
+      python3-minimal \
+      iputils-ping; sync
+
+RUN chmod +x /tmp/*.sh
+
+RUN apt-get clean; sync
+
+WORKDIR /root
+
+EXPOSE 22

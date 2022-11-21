@@ -23,7 +23,7 @@ java_home:          "/usr/lib/jvm"
 jenkins_version:    "2.378"
 jenkins_hostname:   "jenkins.awscb.id"
 jenkins_http_port:  8080
-java_packages:      "openjdk-11-jdk"
+java_packages:      "openjdk-16-jdk"
 jenkins_admin_username: "{{ jenkins_admin_username | default('admin') }}"
 jenkins_admin_password: "{{ jenkins_admin_password | default('password') }}"
 jenkins_admin_password_file: "$JENKINS_HOME/secrets/initialAdminPassword"

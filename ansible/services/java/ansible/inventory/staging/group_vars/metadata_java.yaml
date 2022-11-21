@@ -6,4 +6,4 @@ env:               staging
 
 ### Java ###
 java_home:         "/usr/lib/jvm"
-java_packages:     "openjdk-11-jdk"
+java_packages:     "openjdk-16-jdk"

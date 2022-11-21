@@ -20,6 +20,12 @@ Container Nifi & Nifi Registry
 
 ---
 
+## Version 0.7
+
+- Refactoring remove unused scripts
+
+---
+
 ## Version 0.6
 
 - Refactoring path images from docker-compose nifi

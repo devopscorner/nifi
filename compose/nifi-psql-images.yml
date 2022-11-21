@@ -67,10 +67,10 @@ services:
 # NIFI
 #================================================================================================
   nifi:
-    #image: devopscorner/nifi:${NIFI_VERSION:-1.18.0}
-    build:
-      context: ./nifi
-      dockerfile: Dockerfile
+    image: devopscorner/nifi:${NIFI_VERSION:-1.18.0}
+    # build:
+    #   context: ./nifi
+    #   dockerfile: Dockerfile
     container_name: ${CONTAINER_NIFI:-devopscorner_nifi}
     restart: unless-stopped
     hostname: mynifi
@@ -118,10 +118,10 @@ services:
 # NIFI REGISTRY
 #================================================================================================
   nifi-registry:
-    #image: devopscorner/nifi-registry:${NIFI_REGISTRY_VERSION:-1.18.0}
-    build:
-      context: ./nifi-registry
-      dockerfile: Dockerfile
+    image: devopscorner/nifi-registry:${NIFI_REGISTRY_VERSION:-1.18.0}
+    # build:
+    #   context: ./nifi-registry
+    #   dockerfile: Dockerfile
     container_name: ${CONTAINER_NIFI_REGISTRY:-devopscorner_nifi_registry}
     restart: unless-stopped
     hostname: myregistry

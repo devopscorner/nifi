@@ -19,7 +19,7 @@ locals {
 }
 
 resource "aws_elb" "nifi" {
-  name    = "${var.ec2_name}-elb-${var.env[local.env]}"
+  name = "${var.ec2_name}-elb-${var.env[local.env]}"
   subnets = [
     ## Public Subnet
     data.terraform_remote_state.core_state.outputs.ec2_public_1a[0],

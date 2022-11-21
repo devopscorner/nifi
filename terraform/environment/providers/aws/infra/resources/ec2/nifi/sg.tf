@@ -12,86 +12,69 @@ resource "aws_security_group" "nifi" {
   description = "${var.ec2_name}-${var.env[local.env]} security groups"
   vpc_id      = data.aws_vpc.selected.id
 
+  # SSH
   ingress {
-    description = "HTTP Port"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [
-      "${var.access_my_ip}",
-      data.terraform_remote_state.core_state.outputs.ec2_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1c_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1c_cidr
-    ]
-    ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [data.terraform_remote_state.core_state.outputs.security_group_id]
-  }
-
-  ingress {
-    description = "HTTPS Port"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [
-      "${var.access_my_ip}",
-      data.terraform_remote_state.core_state.outputs.ec2_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1c_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1c_cidr
-    ]
-    ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [data.terraform_remote_state.core_state.outputs.security_group_id]
-  }
-
-  ingress {
-    description      = "SSH Port"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [data.terraform_remote_state.core_state.outputs.security_group_id]
   }
-
+  # Portainer UI
   ingress {
-    description = "Portainer Container Administration"
-    from_port   = 5212
-    to_port     = 5212
-    protocol    = "tcp"
-    cidr_blocks = [
-      "${var.access_my_ip}",
-      data.terraform_remote_state.core_state.outputs.ec2_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1c_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1c_cidr
-    ]
+    from_port        = 5213
+    to_port          = 5213
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [data.terraform_remote_state.core_state.outputs.security_group_id]
   }
-
+  # HTTP port for NiFi UI
   ingress {
-    description = "Nifi Web Port"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = [
-      "${var.access_my_ip}",
-      data.terraform_remote_state.core_state.outputs.ec2_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.ec2_private_1c_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1a_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1b_cidr,
-      data.terraform_remote_state.core_state.outputs.eks_private_1c_cidr
-    ]
+    from_port        = 8080
+    to_port          = 8080
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-    security_groups  = [data.terraform_remote_state.core_state.outputs.security_group_id]
+  }
+  # HTTPS port for NiFi UI
+  ingress {
+    from_port        = 8443
+    to_port          = 8443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  # HTTPS port for NiFi Registry
+  ingress {
+    from_port        = 18443
+    to_port          = 18443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  # Remote Input Socket Port
+  ingress {
+    from_port        = 10443
+    to_port          = 10443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  # Cluster Node Protocol Port
+  ingress {
+    from_port        = 11443
+    to_port          = 11443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  # Cluster Node Load Balancing Port
+  ingress {
+    from_port        = 6342
+    to_port          = 6342
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   egress {

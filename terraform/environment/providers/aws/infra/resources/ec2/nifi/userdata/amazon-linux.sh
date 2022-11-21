@@ -41,16 +41,16 @@ sudo curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE
 sudo chmod +x /usr/bin/docker-compose
 
 # install terraform
-wget -O terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+curl -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip &&
     unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin &&
     rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip &&
     # install terragrunt
-    wget -O /usr/local/bin/terragrunt \
+    curl -o /usr/local/bin/terragrunt \
         https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 &&
     chmod +x /usr/local/bin/terragrunt &&
     # install packer
-    wget -O packer_${PACKER_VERSION}_linux_amd64.zip \
+    curl -o packer_${PACKER_VERSION}_linux_amd64.zip \
         https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip &&
     unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/local/bin &&
     rm -f packer_${PACKER_VERSION}_linux_amd64.zip
@@ -88,10 +88,14 @@ sudo usermod -a -G docker ec2-user
 sudo ln -snf $DOCKER_PATH /usr/bin/dock
 sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
 
+sudo systemctl enable docker.service
+sudo systemctl start docker.service
+
 ##### CONFIGURE CodeDeploy #####
-wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
-chmod +x ./install
-./install auto
+# wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
+# chmod +x ./install
+# ./install auto
+curl -s https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install | bash -s auto
 
 ## Set Locale
 sudo echo 'LANG=en_US.utf-8' >>/etc/environment
@@ -100,3 +104,74 @@ sudo echo 'LC_ALL=en_US.utf-8' >>/etc/environment
 ## Adding Custom Sysctl
 sudo echo 'vm.max_map_count=524288' >>/etc/sysctl.conf
 sudo echo 'fs.file-max=131072' >>/etc/sysctl.conf
+
+################################################
+
+export NIFI_VERSION="1.18.0"
+export NIFI_HOME="/home/ec2-user"
+HOSTNAME=$(hostname)
+
+NIFI_USER_AUTHORIZER='managed-authorizer'
+NIFI_BOOTSTRAP_CONF="$NIFI_HOME/nifi-${NIFI_VERSION}/conf/bootstrap.conf"
+NIFI_CONFIG_FILE="$NIFI_HOME/nifi-${NIFI_VERSION}/conf/nifi.properties"
+NIFI_AUTH_Z_FILE="$NIFI_HOME/nifi-${NIFI_VERSION}/conf/authorizers.xml"
+NIFI_HOST="nifi.awscb.id"
+NIFI_PORT=8443
+
+REGISTRY_AUTHORIZER='managed-authorizer'
+REGISTRY_CONFIG_FILE="$NIFI_HOME/nifi-registry-${NIFI_VERSION}/conf/nifi-registry.properties"
+REGISTRY_AUTH_Z_FILE="$NIFI_HOME/nifi-registry-${NIFI_VERSION}/conf/authorizers.xml"
+REGISTRY_HOST="nifi-registry.awscb.id"
+REGISTRY_PORT=18443
+
+echo "//------------- Setup TLS/SSL -------------//"
+$NIFI_HOME/nifi-toolkit-${NIFI_VERSION}/bin/tls-toolkit.sh standalone -n "localhost" -o $NIFI_HOME/nifi-toolkit-${NIFI_VERSION}/target \
+    --subjectAlternativeNames "${HOSTNAME}","${NIFI_HOST}","${REGISTRY_HOST}"
+
+cp $NIFI_HOME/nifi-toolkit-${NIFI_VERSION}/target/localhost/*.jks $NIFI_HOME/nifi-${NIFI_VERSION}/conf/
+cp $NIFI_HOME/nifi-toolkit-${NIFI_VERSION}/target/localhost/*.jks $NIFI_HOME/nifi-registry-${NIFI_VERSION}/conf/
+
+# Registry TLS/SSL setup
+GENERATED_TLS=$NIFI_HOME/nifi-toolkit-${NIFI_VERSION}/target/localhost/nifi.properties
+
+SECURITY_KEYSTORE="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.keystore=" | cut -d'=' -f2)"
+SECURITY_KEYSTORE_TYPE="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.keystoreType=" | cut -d'=' -f2)"
+SECURITY_KEYSTORE_PASSWD="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.keystorePasswd=" | cut -d'=' -f2)"
+SECURITY_KEYPASSWD="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.keyPasswd=" | cut -d'=' -f2)"
+SECURITY_TRUSTSTORE="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.truststore=" | cut -d'=' -f2)"
+SECURITY_TRUSTSTORE_TYPE="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.truststoreType=" | cut -d'=' -f2)"
+SECURITY_TRUSTSTORE_PASSWD="$(cat "${GENERATED_TLS}" | grep -E "nifi.security.truststorePasswd=" | cut -d'=' -f2)"
+
+echo "//------------- Setup NiFi Repository -------------//"
+mkfs -t ext4 /dev/nvme1n1
+mkfs -t ext4 /dev/nvme2n1
+mkfs -t ext4 /dev/nvme3n1
+mkfs -t ext4 /dev/nvme4n1
+
+mkdir -p $NIFI_HOME/nifi-${NIFI_VERSION}/content_repository
+mkdir -p $NIFI_HOME/nifi-${NIFI_VERSION}/provenance_repository
+mkdir -p $NIFI_HOME/nifi-${NIFI_VERSION}/flowfile_repository
+mkdir -p /opt/data/docker
+
+mount /dev/nvme1n1 $NIFI_HOME/nifi-${NIFI_VERSION}/content_repository
+mount /dev/nvme2n1 $NIFI_HOME/nifi-${NIFI_VERSION}/provenance_repository
+mount /dev/nvme3n1 $NIFI_HOME/nifi-${NIFI_VERSION}/flowfile_repository
+mount /dev/nvme4n1 /opt/data
+
+cp /etc/fstab /etc/fstab.backup
+
+echo UUID=$(blkid -o value -s UUID /dev/nvme1n1) $NIFI_HOME/nifi-${NIFI_VERSION}/content_repository ext4 defaults,nofail 0 2 >>/etc/fstab
+echo UUID=$(blkid -o value -s UUID /dev/nvme2n1) $NIFI_HOME/nifi-${NIFI_VERSION}/provenance_repository ext4 defaults,nofail 0 2 >>/etc/fstab
+echo UUID=$(blkid -o value -s UUID /dev/nvme3n1) $NIFI_HOME/nifi-${NIFI_VERSION}/flowfile_repository ext4 defaults,nofail 0 2 >>/etc/fstab
+echo UUID=$(blkid -o value -s UUID /dev/nvme4n1) /opt/data ext4 defaults,nofail 0 2 >>/etc/fstab
+
+mount -a
+
+## Execute Install Libraries ##
+# curl -s http://server/path/script.sh | bash -s arg1 arg2
+curl -s https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/get-jdbc-nifi-ec2-user.sh | bash
+
+curl -o $NIFI_HOME/nifi-psql.yml \
+    https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/nifi-psql-images-ec2-user.yml
+
+cd $NIFI_HOME && docker-compose -f nifi-psql.yml up -d

@@ -82,13 +82,48 @@ resource "aws_instance" "nifi" {
   }
 
   root_block_device {
-    volume_size           = "30"
+    volume_size           = var.ebs_root_size
     volume_type           = "gp2"
     delete_on_termination = true
     encrypted             = true
     kms_key_id            = data.aws_kms_key.cmk_key.arn
-
-    tags = merge(local.tags, local.ebs_tags)
+    tags                  = merge(local.tags, local.ebs_tags)
+  }
+  ebs_block_device {
+    device_name           = "/dev/sdb"
+    volume_size           = var.ebs_content_repo_size
+    volume_type           = "gp2"
+    delete_on_termination = true
+    encrypted             = true
+    kms_key_id            = data.aws_kms_key.cmk_key.arn
+    tags                  = merge(local.tags, local.ebs_tags)
+  }
+  ebs_block_device {
+    device_name           = "/dev/sdc"
+    volume_size           = var.ebs_provenance_repo_size
+    volume_type           = "gp2"
+    delete_on_termination = true
+    encrypted             = true
+    kms_key_id            = data.aws_kms_key.cmk_key.arn
+    tags                  = merge(local.tags, local.ebs_tags)
+  }
+  ebs_block_device {
+    device_name           = "/dev/sdd"
+    volume_size           = var.ebs_flowfile_repo_size
+    volume_type           = "gp2"
+    delete_on_termination = true
+    encrypted             = true
+    kms_key_id            = data.aws_kms_key.cmk_key.arn
+    tags                  = merge(local.tags, local.ebs_tags)
+  }
+  ebs_block_device {
+    device_name           = "/dev/sde"
+    volume_size           = var.ebs_opt_data_size
+    volume_type           = "gp2"
+    delete_on_termination = true
+    encrypted             = true
+    kms_key_id            = data.aws_kms_key.cmk_key.arn
+    tags                  = merge(local.tags, local.ebs_tags)
   }
 }
 

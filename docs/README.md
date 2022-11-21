@@ -3,7 +3,6 @@
 ![all contributors](https://img.shields.io/github/contributors/devopscorner/nifi)
 ![tags](https://img.shields.io/github/v/tag/devopscorner/nifi?sort=semver)
 ![download all](https://img.shields.io/github/downloads/devopscorner/nifi/total.svg)
-![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.5/total)
 ![view](https://views.whatilearened.today/views/github/devopscorner/nifi.svg)
 ![clone](https://img.shields.io/badge/dynamic/json?color=success&label=clone&query=count&url=https://github.com/devopscorner/nifi/blob/master/clone.json?raw=True&logo=github)
 ![issues](https://img.shields.io/github/issues/devopscorner/nifi)

@@ -3,30 +3,30 @@
   version: "4.12.0"
   name: datadog
 
-- src: https://github.com/geerlingguy/ansible-role-nginx
-  scm: git
-  version: "3.1.0"
-  name: nginx
+# - src: https://github.com/geerlingguy/ansible-role-nginx
+#   scm: git
+#   version: "3.1.0"
+#   name: nginx
 
-- src: https://github.com/geerlingguy/ansible-role-mysql
-  scm: git
-  version: "3.3.2"
-  name: mysql
+# - src: https://github.com/geerlingguy/ansible-role-mysql
+#   scm: git
+#   version: "3.3.2"
+#   name: mysql
 
-- src: https://github.com/geerlingguy/ansible-role-postgresql
-  scm: git
-  version: "3.1.1"
-  name: postgres
+# - src: https://github.com/geerlingguy/ansible-role-postgresql
+#   scm: git
+#   version: "3.1.1"
+#   name: postgres
 
-- src: https://github.com/geerlingguy/ansible-role-php
-  scm: git
-  version: "4.7.0"
-  name: php
+# - src: https://github.com/geerlingguy/ansible-role-php
+#   scm: git
+#   version: "4.7.0"
+#   name: php
 
-- src: https://github.com/geerlingguy/ansible-role-adminer
-  scm: git
-  version: "1.3.1"
-  name: adminer
+# - src: https://github.com/geerlingguy/ansible-role-adminer
+#   scm: git
+#   version: "1.3.1"
+#   name: adminer
 
 # - src: https://github.com/geerlingguy/ansible-role-phpmyadmin
 #   scm: git
@@ -48,10 +48,10 @@
   version: "4.1.1"
   name: docker
 
-- src: https://github.com/geerlingguy/ansible-role-jenkins
-  scm: git
-  version: "4.3.0"
-  name: jenkins
+# - src: https://github.com/geerlingguy/ansible-role-jenkins
+#   scm: git
+#   version: "4.3.0"
+#   name: jenkins
 
 - src: https://github.com/ansible-collections/amazon.aws
   scm: git
@@ -63,35 +63,35 @@
   version: "1.0.2"
   name: aws-cli
 
-- src: https://github.com/gantsign/ansible-role-golang
-  scm: git
-  version: "2.9.3"
-  name: golang
+# - src: https://github.com/gantsign/ansible-role-golang
+#   scm: git
+#   version: "2.9.3"
+#   name: golang
 
-- src: https://github.com/geerlingguy/ansible-role-nodejs
-  scm: git
-  version: "6.0.0"
-  name: nodejs
+# - src: https://github.com/geerlingguy/ansible-role-nodejs
+#   scm: git
+#   version: "6.0.0"
+#   name: nodejs
 
 - src: https://github.com/geerlingguy/ansible-role-java
   scm: git
   version: "1.10.0"
   name: java
 
-- src: https://github.com/andrewrothstein/ansible-kubectl
-  scm: git
-  version: "v1.1.65"
-  name: kubectl
+# - src: https://github.com/andrewrothstein/ansible-kubectl
+#   scm: git
+#   version: "v1.1.65"
+#   name: kubectl
 
-- src: https://github.com/geerlingguy/ansible-role-helm
-  scm: git
-  version: "1.0.1"
-  name: helm
+# - src: https://github.com/geerlingguy/ansible-role-helm
+#   scm: git
+#   version: "1.0.1"
+#   name: helm
 
-- src: https://github.com/abdennour/ansible-role-helmfile
-  scm: git
-  version: ""
-  name: helmfile
+# - src: https://github.com/abdennour/ansible-role-helmfile
+#   scm: git
+#   version: ""
+#   name: helmfile
 
 # - src: https://github.com/cavemandaveman/ansible-role-nifi
 #   scm: git

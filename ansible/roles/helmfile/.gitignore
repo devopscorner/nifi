@@ -1,9 +1,0 @@
-*.retry
-*/__pycache__
-*.pyc
-**~
-.ansible-roles/
-*.tar.gz
-Dockerfile.*
-requirements.yml
-**.swp

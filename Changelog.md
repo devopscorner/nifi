@@ -20,6 +20,14 @@ Container Nifi & Nifi Registry
 
 ---
 
+## Version 0.6
+
+- Refactoring path images from docker-compose nifi
+- Refactoring user-data for spesific operating system (ubuntu / aws-linux)
+- Added documentation assets nifi configuration
+- Setup additional volume (EBS attachment) for spesific Nifi folder & docker container
+
+---
 ## Version 0.5
 
 - Added Ansible Service Pattern for Provisioning Nifi with VM (Virtual Machine) / Instances EC2

@@ -1,0 +1,210 @@
+version: '3.7'
+
+#================================================================================================
+# NETWORK SETUP
+#================================================================================================
+networks:
+  devopscorner_net:
+    name: ${NETWORKS_NAME:-devopscorner_net}
+    driver: ${NETWORKS_DRIVER:-bridge}
+    ipam:
+      config:
+        - subnet: 172.146.146.0/16
+
+#================================================================================================
+# VOLUME SETUP
+#================================================================================================
+volumes:
+  vol_portainer:
+    driver: ${VOLUMES_DRIVER:-local}
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATA_PORTAINER:-/opt/data/docker/portainer2.9}
+  vol_nifi:
+    driver: ${VOLUMES_DRIVER:-local}
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATA_NIFI:-/opt/data/docker/nifi-1.18.0}
+  vol_nifi_registry:
+    driver: ${VOLUMES_DRIVER:-local}
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATA_NIFI_REGISTRY:-/opt/data/docker/nifi-registry1.18.0}
+  vol_postgres:
+    driver: ${VOLUMES_DRIVER:-local}
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATA_POSTGRESQL:-/opt/data/docker/postgresql12.8/pgdata}
+
+services:
+#================================================================================================
+# PORTAINER
+#================================================================================================
+  portainer:
+    image: dockerframework/portainer:${PORTAINER_VERSION:-2.9.0}
+    container_name: ${CONTAINER_PORTAINER:-devopscorner_portainer}
+    restart: unless-stopped
+    hostname: myportainer
+    ports:
+      - "${PORT_PORTAINER:-5213}:9000"
+    volumes:
+  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      - vol_portainer:/data
+    environment:
+      - PORTAINER_TEMPLATE=generic
+      - PORTAINER_VERSION=${PORTAINER_VERSION:-2.9.0}
+    privileged: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_PORTAINER:-172.146.146.4}
+
+#================================================================================================
+# NIFI
+#================================================================================================
+  nifi:
+    image: devopscorner/nifi:${NIFI_VERSION:-1.18.0}
+    # build:
+    #   context: ./nifi
+    #   dockerfile: Dockerfile
+    container_name: ${CONTAINER_NIFI:-devopscorner_nifi}
+    restart: unless-stopped
+    hostname: mynifi
+    environment:
+      - NIFI_VERSION=${NIFI_VERSION:-1.18.0}
+      - NIFI_BASE_DIR=/opt/nifi
+      - NIFI_HOME=/opt/nifi/nifi-current
+      - NIFI_LOG_DIR=/opt/nifi/nifi-current/logs
+      - NIFI_TOOLKIT_HOME=/opt/nifi/nifi-toolkit-current
+      - NIFI_PID_DIR=/opt/nifi/nifi-current/run
+      - NIFI_WEB_HTTP_PORT=8080
+      - NIFI_CLUSTER_IS_NODE=true
+      - NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082
+      - NIFI_ZK_CONNECT_STRING=myzookeeper:2181
+      - NIFI_ELECTION_MAX_WAIT=30 sec
+      - NIFI_SENSITIVE_PROPS_KEY='98765432101234567890A'
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_NIFI:-curl localhost:8080/nifi/}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 5
+    volumes:
+  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/content_repository:/opt/nifi/nifi-current/content_repository
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/database_repository:/opt/nifi/nifi-current/database_repository
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/provenance_repository:/opt/nifi/nifi-current/provenance_repository
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/drivers:/opt/nifi/nifi-current/drivers
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/state:/opt/nifi/nifi-current/state
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/logs:/opt/nifi/nifi-current/logs
+    ports:
+      - 80:8080      # HTTP (Default)
+      - 8080:8080    # HTTP
+      - 8443:8443    # HTTPS
+      - 10000:10000  # Remote Input Socket Port
+      - 8000:8000    # JVM Debugger
+    privileged: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_NIFI:-172.146.146.100}
+
+#================================================================================================
+# NIFI REGISTRY
+#================================================================================================
+  nifi-registry:
+    image: devopscorner/nifi-registry:${NIFI_REGISTRY_VERSION:-1.18.0}
+    # build:
+    #   context: ./nifi-registry
+    #   dockerfile: Dockerfile
+    container_name: ${CONTAINER_NIFI_REGISTRY:-devopscorner_nifi_registry}
+    restart: unless-stopped
+    hostname: myregistry
+    environment:
+      - NIFI_REGISTRY_VERSION=${NIFI_REGISTRY_VERSION:-1.18.0}
+      - NIFI_REGISTRY_BASE_DIR=/opt/nifi-registry
+      - NIFI_REGISTRY_HOME=/opt/nifi-registry/nifi-registry-current
+      - NIFI_REGISTRY_DB_DIR=/opt/nifi-registry/nifi-registry-current/database
+      - NIFI_REGISTRY_FLOW_STORAGE_DIR=/opt/nifi-registry/nifi-registry-current/flow_storage
+      - NIFI_REGISTRY_FLOW_PROVIDER=file
+      - LOG_LEVEL=INFO
+      ### NIFI PostgreSQL ###
+      #- NIFI_REGISTRY_DB_URL=jdbc:postgresql://0.0.0.0:5432/nifireg
+      #- NIFI_REGISTRY_DB_DRIVER_CLASS=org.postgresql.Driver
+      #- NIFI_REGISTRY_DB_DRIVER_DIRECTORY=/opt/nifi-registry/nifi-registry-current/lib/
+      #- NIFI_REGISTRY_DB_USERNAME=postgres
+      #- NIFI_REGISTRY_DB_PASSWORD=MyP4ssw0rd
+    volumes:
+  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      - /home/ubuntu/nifi-registry-${NIFI_REGISTRY_VERSION:-1.18.0}/database:/opt/nifi-registry/nifi-registry-current/database
+      - /home/ubuntu/nifi-registry-${NIFI_REGISTRY_VERSION:-1.18.0}/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+      # Download Java-8:
+      # https://jdbc.postgresql.org/download/postgresql-42.5.0.jar
+      #- /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/drivers/postgresql-42.5.0.jar:/opt/nifi-registry/nifi-registry-current/lib/postgresql-42.5.0.jar
+      # Download Java-7:
+      # https://jdbc.postgresql.org/download/postgresql-42.2.26.jre7.jar
+      - /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/drivers/postgresql-42.2.26.jre7.jar:/opt/nifi-registry/nifi-registry-current/lib/postgresql-42.2.26.jre7.jar
+      # Download Java-6:
+      # https://jdbc.postgresql.org/download/postgresql-42.2.26.jre6.jar
+      #- /home/ubuntu/nifi-${NIFI_VERSION:-1.18.0}/drivers/postgresql-42.2.26.jre6.jar:/opt/nifi-registry/nifi-registry-current/lib/postgresql-42.2.26.jre6.jar
+    ports:
+      - 18080:18080
+    # command: dockerize -timeout 60s -wait tcp://dbproject.jerr.uk:5432 /opt/nifi-registry/scripts/start.sh
+    privileged: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_NIFI_REGISTRY:-172.146.146.101}
+
+#================================================================================================
+# ZOOKEEPER
+#================================================================================================
+  zookeeper:
+    image: bitnami/zookeeper:${ZOOKEEPER_VERSION:-3.8.0}
+    container_name: ${CONTAINER_ZOOKEEPER:-devopscorner_zookeeper}
+    restart: unless-stopped
+    hostname: myzookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - 2181:2181
+    privileged: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_ZOOKEEPER:-172.146.146.102}
+
+#================================================================================================
+# POSTGRESQL
+#================================================================================================
+  postgresql:
+    image: postgres:${POSTGRES_VERSION:-14.6}
+    container_name: ${CONTAINER_POSTGRESQL:-devopscorner_postgresql}
+    restart: always
+    hostname: mypostgresql
+    ports:
+      - "${PORT_POSTGRESQL:-5432}:5432"
+    volumes:
+  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      - vol_postgres:/var/lib/postgresql
+      ## Path config postgresql.conf ##
+      - ${CONFIG_POSTGRESQL:-./docker/config/postgresql/postgresql.conf}:/var/lib/postgresql/postgresql.conf
+      ## Path services ##
+      - ${SERVICES_TOOLS:-./services}:/tmp/services
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
+    environment:
+      - TZ="Asia/Jakarta"
+      - POSTGRES_VERSION=${POSTGRES_VERSION:-14.6}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-MyP4ssw0rd}
+  #   - PGDATA=${PGDATA:-/var/lib/postgresql/pgdata}
+    privileged: true
+    tty: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_POSTGRESQL:-172.146.146.6}

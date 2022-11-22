@@ -1,6 +1,6 @@
 datadog
 requests
-PyYaml==5.3
+PyYaml==5.4
 python-dateutil
 google-auth
 google-auth-httplib2

@@ -19,13 +19,11 @@ Container Nifi & Nifi Registry
 - Unified Machine Learning (ML) Framework with [Ivy](https://github.com/unifyai/ivy)
 
 ---
-
 ## Version 0.7
 
 - Refactoring remove unused scripts
 
 ---
-
 ## Version 0.6
 
 - Refactoring path images from docker-compose nifi

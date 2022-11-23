@@ -197,6 +197,20 @@ echo UUID=$(blkid -o value -s UUID /dev/nvme4n1) /opt/data ext4 defaults,nofail 
 
 mount -a
 
+## Change Permission ##
+chown -R ubuntu:ubuntu $NIFI_HOME/nifi-${NIFI_VERSION}
+chown -R ubuntu:ubuntu $NIFI_HOME/nifi-registry-${NIFI_VERSION}
+
+mkdir -p /opt/data/docker/portainer2.9
+mkdir -p /opt/data/docker/nifi-${NIFI_VERSION}
+mkdir -p /opt/data/docker/nifi-registry-${NIFI_VERSION}
+mkdir -p /opt/data/docker/postgresql12.8/pgdata
+mkdir -p /opt/data/docker/postgresql14.6/pgdata
+mkdir -p /opt/data/docker/openfortivpn22.04
+
+chown -R ubuntu:ubuntu /opt/data/docker
+chmod 777 /opt/data/docker
+
 ## Execute Install Libraries ##
 # curl -s http://server/path/script.sh | bash -s arg1 arg2
 curl -s https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/get-jdbc-nifi-ubuntu.sh | bash

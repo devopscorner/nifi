@@ -74,13 +74,6 @@ resource "aws_instance" "nifi" {
 
   user_data = "${var.ami_os}" == "aws-linux" ? file("./userdata/amazon-linux.sh") : file("./userdata/ubuntu.sh")
 
-  lifecycle {
-    prevent_destroy = true
-    ignore_changes = [
-      tags,
-    ]
-  }
-
   root_block_device {
     volume_size           = var.ebs_root_size
     volume_type           = "gp2"
@@ -124,6 +117,15 @@ resource "aws_instance" "nifi" {
     encrypted             = true
     kms_key_id            = data.aws_kms_key.cmk_key.arn
     tags                  = merge(local.tags, local.ebs_tags)
+  }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      tags,
+      "root_block_device",
+      "ebs_block_device"
+    ]
   }
 }
 

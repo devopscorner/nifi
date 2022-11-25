@@ -38,7 +38,13 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ${DATA_POSTGRESQL:-/opt/data/docker/postgresql12.8/pgdata}
+      device: ${DATA_POSTGRESQL:-/opt/data/docker/postgresql14.6/pgdata}
+  vol_forticlient:
+    driver: ${VOLUMES_DRIVER:-local}
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATA_FORTICLIENT:-/opt/data/docker/forticlient22.04}
 
 services:
 #================================================================================================

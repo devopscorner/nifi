@@ -19,6 +19,11 @@ Container Nifi & Nifi Registry
 - Unified Machine Learning (ML) Framework with [Ivy](https://github.com/unifyai/ivy)
 
 ---
+## Version 0.9
+
+- Added FortiClient VPN container for multinetwork bridge (cloud network & onprem)
+
+---
 ## Version 0.8
 
 - Upgrade PostgreSQL nifi container to 14.6

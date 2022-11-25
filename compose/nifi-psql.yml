@@ -237,8 +237,8 @@ services:
   #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
       - vol_openfortivpn:/data
     ports:
-      - 8080:8080    # HTTP
-      - 8443:8443    # HTTPS
+      - 5414:8080    # HTTP
+      - 5415:8443    # HTTPS
     privileged: true
     networks:
       devopscorner_net:

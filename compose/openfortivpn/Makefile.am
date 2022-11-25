@@ -1,4 +1,4 @@
-IMAGE = YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/forticlient
+IMAGE = YOUR_AWS_ACCOUNT.dkr.ecr.ap-southeast-1.amazonaws.com/devopscorner/openfortivpn
 TAG = 22.04
 
 clean-local:

@@ -94,6 +94,10 @@ python3 -m pip install pip==21.3.1 &&
 
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
+# Cleanup Cache
+sudo apt-get clean &&
+    sudo apt-get autoremove -y
+
 ## install tfenv
 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >>~/.bash_profile
@@ -101,25 +105,6 @@ ln -sf ~/.tfenv/bin/* /usr/local/bin
 mkdir -p ~/.local/bin/
 . ~/.profile
 ln -sf ~/.tfenv/bin/* ~/.local/bin
-
-# Cleanup Cache
-sudo apt-get clean &&
-    sudo apt-get autoremove -y
-
-##### CUSTOMIZE ~/.profile #####
-echo '' >>~/.profile
-echo '### Docker ###
-export DOCKER_CLIENT_TIMEOUT=300
-export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
-
-##### CONFIGURE DOCKER #####
-sudo usermod -a -G docker ubuntu
-
-sudo ln -snf $DOCKER_PATH /usr/bin/dock
-sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
-
-sudo systemctl enable docker.service
-sudo systemctl start docker.service
 
 ##### CONFIGURE CodeDeploy #####
 # wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
@@ -219,3 +204,23 @@ curl -o $NIFI_HOME/nifi-psql.yml \
     https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/nifi-psql-images-ubuntu.yml
 
 cd $NIFI_HOME && docker-compose -f nifi-psql.yml up -d
+
+##### CUSTOMIZE ~/.profile #####
+echo '' >>~/.profile
+echo '### Docker ###
+export DOCKER_CLIENT_TIMEOUT=300
+export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
+
+##### CONFIGURE DOCKER #####
+## Create Folder Docker
+mkdir -p /opt/data/lib/docker
+## Symlink Folder Docker
+ln -sf /opt/data/lib/docker /var/lib/docker
+
+sudo usermod -a -G docker ubuntu
+
+sudo ln -snf $DOCKER_PATH /usr/bin/dock
+sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
+
+sudo systemctl enable docker.service
+sudo systemctl start docker.service

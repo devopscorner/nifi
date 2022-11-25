@@ -65,8 +65,10 @@ python3 -m pip install pip==21.3.1 &&
         httplib2 \
         six \
         requests \
-        boto3 \
-        awscli
+        boto3
+
+# Cleanup Cache
+sudo yum autoremove -y
 
 ## install tfenv
 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
@@ -75,21 +77,6 @@ ln -sf ~/.tfenv/bin/* /usr/local/bin
 mkdir -p ~/.local/bin/
 . ~/.profile
 ln -sf ~/.tfenv/bin/* ~/.local/bin
-
-##### CUSTOMIZE ~/.profile #####
-echo '' >>~/.profile
-echo '### Docker ###
-export DOCKER_CLIENT_TIMEOUT=300
-export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
-
-##### CONFIGURE DOCKER #####
-sudo usermod -a -G docker ec2-user
-
-sudo ln -snf $DOCKER_PATH /usr/bin/dock
-sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
-
-sudo systemctl enable docker.service
-sudo systemctl start docker.service
 
 ##### CONFIGURE CodeDeploy #####
 # wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
@@ -189,3 +176,23 @@ curl -o $NIFI_HOME/nifi-psql.yml \
     https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/nifi-psql-images-ec2-user.yml
 
 cd $NIFI_HOME && docker-compose -f nifi-psql.yml up -d
+
+##### CUSTOMIZE ~/.profile #####
+echo '' >>~/.profile
+echo '### Docker ###
+export DOCKER_CLIENT_TIMEOUT=300
+export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
+
+##### CONFIGURE DOCKER #####
+## Create Folder Docker
+mkdir -p /opt/data/lib/docker
+## Symlink Folder Docker
+ln -sf /opt/data/lib/docker /var/lib/docker
+
+sudo usermod -a -G docker ec2-user
+
+sudo ln -snf $DOCKER_PATH /usr/bin/dock
+sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
+
+sudo systemctl enable docker.service
+sudo systemctl start docker.service

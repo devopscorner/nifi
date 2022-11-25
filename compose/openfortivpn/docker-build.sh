@@ -10,7 +10,7 @@ set -e
 export AWS_ACCOUNT_ID=$1
 export CI_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.ap-southeast-1.amazonaws.com"
 export CI_PROJECT_PATH="devopscorner"
-export CI_PROJECT_NAME="forticlient"
+export CI_PROJECT_NAME="openfortivpn"
 
 export IMAGE="$CI_REGISTRY/$CI_PROJECT_PATH/$CI_PROJECT_NAME"
 export TAG="22.04"

@@ -62,7 +62,7 @@ node('worker-devops-cicd') {
         string(name: 'CICD_ANSIBLE_PLAYBOOKS', description: 'Enter Ansible Playbooks Name (eg: service-[name_service].yaml)')
         string(name: 'CICD_ANSIBLE_HOSTS', description: 'Enter Ansible Deploy Host Target (eg: nifi / nifi-public-ip / nifi-private-ip)')
         string(name: 'CICD_ANSIBLE_REMOTE_USER', description: 'Enter Ansible Remote User (eg: ec2-user / ubuntu / root)')
-        string(name: 'CICD_ANSIBLE_PEM_KEY', description: 'Enter Ansible Key Access (eg: devops-staging.pem)')
+        string(name: 'CICD_ANSIBLE_PEM_KEY', description: 'Enter Ansible Key Access (eg: devopscorner-staging.pem)')
         string(name: 'CICD_ANSIBLE_ARGS', description: 'Enter Ansible Arguments (eg: -vvv)')
     }
     stage('Clone'){

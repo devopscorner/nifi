@@ -1,8 +1,0 @@
----
-app_name:          nodejs
-microservice_name: nodejs
-run_type:          services
-env:               staging
-
-### NodeJS ###
-nodejs_version:    "16.13.0"

@@ -34,11 +34,7 @@ Container Nifi & Nifi Registry
 │   ├── datadog
 │   ├── docker
 │   ├── java
-│   ├── jenkins
-│   │   ├── service-jenkins-master.yaml
-│   │   └── service-jenkins-master.yaml
-│   ├── nifi
-│   └── nvm
+│   └── nifi
 ├── requirements.txt
 ├── roles
 │   ├── adminer
@@ -51,9 +47,7 @@ Container Nifi & Nifi Registry
 │   ├── datadog
 │   ├── docker
 │   ├── java
-│   ├── jenkins
 │   ├── nifi
-│   ├── nvm
 │   └── requirements.yaml
 ├── scripts
 │   └── installer
@@ -76,7 +70,7 @@ Container Nifi & Nifi Registry
     │   │           │   └── metadata_nifi.yaml
     │   │           └── host_vars
     │   └── terraform
-    └── jenkins
+    └── docker
         ├── ansible
         │   └── inventory
         │       ├── import_playbooks.yaml
@@ -91,8 +85,7 @@ Container Nifi & Nifi Registry
         │           │   ├── all.yaml
         │           │   ├── inventory.ini
         │           │   ├── local.yaml
-        │           │   ├── metadata_jenkins_master.yaml
-        │           │   └── metadata_jenkins_worker.yaml
+        │           │   └── metadata_docker.yaml
         │           └── host_vars
         └── terraform
 ```
@@ -126,72 +119,6 @@ Container Nifi & Nifi Registry
 
 ## Deploy by Services
 
-### Jenkins Master
-
-- Setup host target
-  ```
-  {{ run_type }}/{{ microservice_name }}/ansible/inventory/{{ env }}/group_vars/inventory.ini
-  ```
-- Setup variables deployment
-  ```
-  services/jenkins/ansible/inventory/{{ env }}/group_vars/metadata_jenkins_master.yaml
-  ```
-- Deploy cli jenkins master
-  ```
-  run_type           : services
-  microservice_name  : jenkins
-  env                : staging
-
-  ansible-playbook -i {{ run_type }}/{{ microservice_name }}/ansible/inventory/{{ env }}/group_vars/inventory.ini -v playbooks/{{ services }}/service-jenkins-master.yaml \
-      -e "deploy_hosts=jenkins-master" \
-      -e "run_type=services" \
-      -e "microservice_name=jenkins" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-
-  ---
-
-  ansible-playbook -i services/jenkins/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/jenkins/service-jenkins-master.yaml \
-      -e "deploy_hosts=jenkins-master" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-  ```
-
-### Jenkins Worker
-
-- Setup host target
-  ```
-  {{ run_type }}/{{ microservice_name }}/ansible/inventory/{{ env }}/group_vars/inventory.ini
-  ```
-- Setup variables deployment
-  ```
-  services/jenkins/ansible/inventory/{{ env }}/group_vars/metadata_jenkins_worker.yaml
-  ```
-- Deploy cli jenkins worker
-  ```
-  run_type          : services
-  microservice_name  : jenkins
-  env                : staging
-
-  ansible-playbook -i {{ run_type }}/{{ microservice_name }}/ansible/inventory/{{ env }}/group_vars/inventory.ini -v playbooks/{{ services }}/service-jenkins-worker.yaml \
-      -e "deploy_hosts=jenkins-worker" \
-      -e "run_type=services" \
-      -e "microservice_name=jenkins" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-
-  ---
-
-  ansible-playbook -i services/jenkins/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/jenkins/service-jenkins-worker.yaml \
-      -e "deploy_hosts=jenkins-worker" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-  ```
-
 ### Nifi
 
 - Setup host target
@@ -209,7 +136,7 @@ Container Nifi & Nifi Registry
   env                : staging
 
   ansible-playbook -i {{ run_type }}/{{ microservice_name }}/ansible/inventory/{{ env }}/group_vars/inventory.ini -v playbooks/{{ services }}/service-nifi.yaml \
-      -e "deploy_hosts=nifi-public" \
+      -e "deploy_hosts=nifi-public-ip" \
       -e "run_type=services" \
       -e "microservice_name=nifi" \
       -e "env=staging" \
@@ -219,7 +146,7 @@ Container Nifi & Nifi Registry
   ---
 
   ansible-playbook -i services/nifi/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/nifi/service-nifi.yaml \
-      -e "deploy_hosts=nifi-public" \
+      -e "deploy_hosts=nifi-public-ip" \
       -e "env=staging" \
       --private-key=keys/devopscorner-staging.pem \
       -K -vvv
@@ -248,7 +175,7 @@ ansible-inventory --list -i services/nifi/ansible/inventory/staging/group_vars/i
   enable_plugins = aws_ec2
 
   [defaults]
-  inventory = ./inventory/aws_ec2.yaml
+  inventory = ./inventory/aws/aws_ec2.yaml
 
   [profile dev]
   aws_access_key_id = AWS_ACCESS_KEY
@@ -260,7 +187,7 @@ ansible-inventory --list -i services/nifi/ansible/inventory/staging/group_vars/i
 
   ###################################################
 
-  ## inventory/aws_ec2.yaml
+  ## inventory/aws/aws_ec2.yaml
   ---
   plugin: aws_ec2
 
@@ -303,28 +230,10 @@ ansible-inventory --list -i services/nifi/ansible/inventory/staging/group_vars/i
   private_key_file= /opt/keyserver/devopscorner-staging.pem
   ```
 
-- Deploy cli jenkins master
-  ```
-  ansible-playbook -i inventory/ec2.py -v playbooks/jenkins/service-jenkins-master.yaml \
-      -e "deploy_hosts=jenkins-master" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-  ```
-
-- Deploy cli jenkins worker
-  ```
-  ansible-playbook -i inventory/ec2.py -v playbooks/jenkins/service-jenkins-worker.yaml \
-      -e "deploy_hosts=jenkins-worker" \
-      -e "env=staging" \
-      --private-key=keys/devopscorner-staging.pem \
-      -K -vvv
-  ```
-
 - Deploy cli nifi
   ```
   ansible-playbook -i inventory/ec2.py -v playbooks/nifi/service-nifi.yaml \
-      -e "deploy_hosts=nifi-jenkins-master" \
+      -e "deploy_hosts=nifi-public-ip" \
       -e "env=staging" \
       --private-key=keys/devopscorner-staging.pem \
       -K -vvv
@@ -332,20 +241,20 @@ ansible-inventory --list -i services/nifi/ansible/inventory/staging/group_vars/i
 
 ## Deploy with Spesific Tags
 
-- Deploy Single Tags for Jenkins Master
+- Deploy Single Tags for Docker
   ```
-  ansible-playbook -i services/jenkins/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/jenkins/service-jenkins-master.yaml \
-      -e "deploy_hosts=jenkins-master" \
+  ansible-playbook -i services/docker/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/docker/service-docker.yaml \
+      -e "deploy_hosts=docker-public-ip" \
       -e "env=staging" \
       --private-key=keys/devopscorner-staging.pem \
       -K -vvv -t=nifi
   ```
 
-- Deploy Multi Tags for Jenkins Master
+- Deploy Multi Tags for Docker
   ```
-  ansible-playbook -i services/jenkins/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/jenkins/service-jenkins-master.yaml \
-      -e "deploy_hosts=jenkins-master" \
+  ansible-playbook -i services/docker/ansible/inventory/staging/group_vars/inventory.ini -v playbooks/docker/service-docker.yaml \
+      -e "deploy_hosts=docker-public-ip" \
       -e "env=staging" \
       --private-key=keys/devopscorner-staging.pem \
-      -K -vvv -t=java,nifi,nvm
+      -K -vvv -t=java,docker,nifi
   ```

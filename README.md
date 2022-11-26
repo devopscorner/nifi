@@ -116,9 +116,7 @@ Ansible Services Pattern:
   - Datadog
   - Docker
   - Java
-  - Jenkins
   - Nifi
-  - NVM (Node Version Manager)
 
 - Roles by Ansible Galaxy
   - Adminer
@@ -128,9 +126,7 @@ Ansible Services Pattern:
   - Datadog
   - Docker
   - Java
-  - Jenkins
   - Kubectl
-  - NVM (Node Version Manager)
 
 
 ## Terraform Features

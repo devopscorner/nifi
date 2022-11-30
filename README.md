@@ -30,29 +30,10 @@ Container Nifi & Nifi Registry
 
 ## Available Tags
 
-### **NIFI**
-
-| Image name | Size |
-|------------|------|
-| `devopscorner/nifi:latest` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/latest.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=latest) |
-| `devopscorner/nifi:1.18.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.18.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.18.0) |
-| `devopscorner/nifi:1.18` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.18.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.18) |
-| `devopscorner/nifi:1.17.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.17.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.17.0) |
-| `devopscorner/nifi:1.17` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.17.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.17) |
-| `devopscorner/nifi:1.16.3` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.16.3.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.16.3) |
-| `devopscorner/nifi:1.16` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi/1.16.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi/tags?page=1&ordering=last_updated&name=1.16) |
-
-### **NIFI REGISTRY**
-
-| Image name | Size |
-|------------|------|
-| `devopscorner/nifi-registry:latest` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/latest.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=latest) |
-| `devopscorner/nifi-registry:1.18.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.18.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.18.0) |
-| `devopscorner/nifi-registry:1.18` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.18.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.18) |
-| `devopscorner/nifi-registry:1.17.0` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.17.0.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.17.0) |
-| `devopscorner/nifi-registry:1.17` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.17.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.17) |
-| `devopscorner/nifi-registry:1.16.3` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.16.3.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.16.3) |
-| `devopscorner/nifi-registry:1.16` | [![docker image size](https://img.shields.io/docker/image-size/devopscorner/nifi-registry/1.16.svg?label=Image%20size&logo=docker)](https://hub.docker.com/repository/docker/devopscorner/nifi-registry/tags?page=1&ordering=last_updated&name=1.16) |
+| Containers  | Pulls |
+|-------------|-------|
+| Container `devopscorner/nifi` [Tags](docs/README-Nifi.md) | [![nifi pulls](https://img.shields.io/docker/pulls/devopscorner/nifi.svg?label=nifi%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi/) |
+| Container `devopscorner/nifi-registry` [Tags](docs/README-Nifi-Registry.md) | [![nifi-registry pulls](https://img.shields.io/docker/pulls/devopscorner/nifi-registry.svg?label=nifi-registry%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi-registry/) |
 
 ## Features
 
@@ -179,7 +160,7 @@ Multi Environment Workspace:
   Engine:
     Version:          20.10.21
     API version:      1.41 (minimum version 1.12)
-    Go version:       go1.18.7
+    Go version:       go9.7
     Git commit:       3056208
     Built:            Tue Oct 25 18:00:19 2022
     OS/Arch:          linux/amd64
@@ -208,7 +189,7 @@ Multi Environment Workspace:
   ```
   aws --version
   ---
-  aws-cli/2.8.7 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
+  nifi/2.8.7 Python/3.9.11 Darwin/21.6.0 exe/x86_64 prompt/off
   ```
 
 - Terraform Cli

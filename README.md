@@ -2,6 +2,8 @@
 
 ![all contributors](https://img.shields.io/github/contributors/devopscorner/nifi)
 ![tags](https://img.shields.io/github/v/tag/devopscorner/nifi?sort=semver)
+[![nifi pulls](https://img.shields.io/docker/pulls/devopscorner/nifi.svg?label=nifi%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi/)
+[![nifi-registry pulls](https://img.shields.io/docker/pulls/devopscorner/nifi-registry.svg?label=nifi-registry%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi-registry/)
 ![download all](https://img.shields.io/github/downloads/devopscorner/nifi/total.svg)
 ![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.9/total)
 ![view](https://views.whatilearened.today/views/github/devopscorner/nifi.svg)
@@ -179,7 +181,7 @@ Multi Environment Workspace:
   Engine:
     Version:          20.10.21
     API version:      1.41 (minimum version 1.12)
-    Go version:       go1.18.7
+    Go version:       go9.7
     Git commit:       3056208
     Built:            Tue Oct 25 18:00:19 2022
     OS/Arch:          linux/amd64

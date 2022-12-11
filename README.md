@@ -3,7 +3,7 @@
 ![all contributors](https://img.shields.io/github/contributors/devopscorner/nifi)
 ![tags](https://img.shields.io/github/v/tag/devopscorner/nifi?sort=semver)
 ![download all](https://img.shields.io/github/downloads/devopscorner/nifi/total.svg)
-![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.9/total)
+![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.10/total)
 ![view](https://views.whatilearened.today/views/github/devopscorner/nifi.svg)
 ![clone](https://img.shields.io/badge/dynamic/json?color=success&label=clone&query=count&url=https://raw.githubusercontent.com/devopscorner/nifi/master/clone.json?raw=True&logo=github)
 ![issues](https://img.shields.io/github/issues/devopscorner/nifi)
@@ -39,7 +39,7 @@ Container Nifi & Nifi Registry
 
 - Nifi (latest: 1.18.0)
 - Nifi Registry (latest: 1.18.0)
-- Python3.9
+- Python-3.10.8
 - Python Libraries
   - cffi
   - awscli

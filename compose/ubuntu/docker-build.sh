@@ -13,7 +13,7 @@ export CI_PROJECT_PATH="devopscorner"
 export CI_PROJECT_NAME="ubuntu"
 
 export IMAGE="$CI_REGISTRY/$CI_PROJECT_PATH/$CI_PROJECT_NAME"
-export TAG="20.04"
+export TAG="22.04"
 
 echo " Build Image => $IMAGE:$TAG"
 docker build . -t $IMAGE:$TAG

@@ -1,4 +1,4 @@
-FROM ubuntu:${UBUNTU_VERSION:-20.04}
+FROM ubuntu:${UBUNTU_VERSION:-22.04}
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -8,11 +8,11 @@ ARG GIT_URL
 ENV VENDOR="DevOpsCornerId"
 ENV AUTHOR="DevOpsCorner.id <support@devopscorner.id>"
 ENV IMG_NAME="ubuntu"
-ENV IMG_VERSION="20.04"
-ENV IMG_DESC="Docker Image Ubuntu 20.04"
+ENV IMG_VERSION="22.04"
+ENV IMG_DESC="Docker Image Ubuntu 22.04"
 ENV IMG_ARCH="amd64/x86_64"
 
-ENV UBUNTU_VERSION="20.04"
+ENV UBUNTU_VERSION="22.04"
 
 LABEL maintainer="$AUTHOR" \
       architecture="$IMG_ARCH" \
@@ -62,7 +62,7 @@ RUN apt-get install -y \
 
 RUN chmod +x /tmp/*.sh
 
-RUN apt-get clean; sync
+RUN apt-get clean -q && apt-get autoremove --purge; sync
 
 WORKDIR /root
 

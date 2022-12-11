@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 #================================================================================================
 # NETWORK SETUP
@@ -47,9 +47,9 @@ volumes:
       device: ${DATA_OPENFORTIVPN:-/opt/data/docker/openfortivpn22.04}
 
 services:
-#================================================================================================
-# PORTAINER
-#================================================================================================
+  #================================================================================================
+  # PORTAINER
+  #================================================================================================
   portainer:
     image: dockerframework/portainer:${PORTAINER_VERSION:-2.9.0}
     container_name: ${CONTAINER_PORTAINER:-devopscorner_portainer}
@@ -58,8 +58,8 @@ services:
     ports:
       - "${PORT_PORTAINER:-5213}:9000"
     volumes:
-  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-      - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      # - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
       - vol_portainer:/data
     environment:
       - PORTAINER_TEMPLATE=generic
@@ -69,9 +69,9 @@ services:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_PORTAINER:-172.146.146.4}
 
-#================================================================================================
-# NIFI
-#================================================================================================
+  #================================================================================================
+  # NIFI
+  #================================================================================================
   nifi:
     image: devopscorner/nifi:${NIFI_VERSION:-1.18.0}
     # build:
@@ -100,8 +100,8 @@ services:
       start_period: "5s"
       retries: 5
     volumes:
-  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      # - /etc/localtime:/etc/localtime:ro        ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
       - ./nifi-${NIFI_VERSION:-1.18.0}/content_repository:/opt/nifi/nifi-current/content_repository
       - ./nifi-${NIFI_VERSION:-1.18.0}/database_repository:/opt/nifi/nifi-current/database_repository
       - ./nifi-${NIFI_VERSION:-1.18.0}/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
@@ -110,19 +110,19 @@ services:
       - ./nifi-${NIFI_VERSION:-1.18.0}/state:/opt/nifi/nifi-current/state
       - ./nifi-${NIFI_VERSION:-1.18.0}/logs:/opt/nifi/nifi-current/logs
     ports:
-      - 80:8080      # HTTP (Default)
-      - 8080:8080    # HTTP
-      - 8443:8443    # HTTPS
-      - 10000:10000  # Remote Input Socket Port
-      - 8000:8000    # JVM Debugger
+      - 80:8080 # HTTP (Default)
+      - 8080:8080 # HTTP
+      - 8443:8443 # HTTPS
+      - 10000:10000 # Remote Input Socket Port
+      - 8000:8000 # JVM Debugger
     privileged: true
     networks:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_NIFI:-172.146.146.100}
 
-#================================================================================================
-# NIFI REGISTRY
-#================================================================================================
+  #================================================================================================
+  # NIFI REGISTRY
+  #================================================================================================
   nifi-registry:
     image: devopscorner/nifi-registry:${NIFI_REGISTRY_VERSION:-1.18.0}
     # build:
@@ -146,8 +146,8 @@ services:
       #- NIFI_REGISTRY_DB_USERNAME=postgres
       #- NIFI_REGISTRY_DB_PASSWORD=MyP4ssw0rd
     volumes:
-  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      # - /etc/localtime:/etc/localtime:ro        ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
       - ./nifi-registry-${NIFI_REGISTRY_VERSION:-1.18.0}/database:/opt/nifi-registry/nifi-registry-current/database
       - ./nifi-registry-${NIFI_REGISTRY_VERSION:-1.18.0}/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
       # Download Java-8:
@@ -167,26 +167,29 @@ services:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_NIFI_REGISTRY:-172.146.146.101}
 
-#================================================================================================
-# ZOOKEEPER
-#================================================================================================
+  #================================================================================================
+  # ZOOKEEPER
+  #================================================================================================
   zookeeper:
     image: bitnami/zookeeper:${ZOOKEEPER_VERSION:-3.8.0}
     container_name: ${CONTAINER_ZOOKEEPER:-devopscorner_zookeeper}
     restart: unless-stopped
     hostname: myzookeeper
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
       - 2181:2181
+    volumes:
+      # - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
     privileged: true
     networks:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_ZOOKEEPER:-172.146.146.102}
 
-#================================================================================================
-# POSTGRESQL
-#================================================================================================
+  #================================================================================================
+  # POSTGRESQL
+  #================================================================================================
   postgresql:
     image: postgres:${POSTGRES_VERSION:-14.6}
     container_name: ${CONTAINER_POSTGRESQL:-devopscorner_postgresql}
@@ -195,8 +198,8 @@ services:
     ports:
       - "${PORT_POSTGRESQL:-5432}:5432"
     volumes:
-  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+      # - /etc/localtime:/etc/localtime:ro        ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
       - vol_postgres:/var/lib/postgresql
       ## Path config postgresql.conf ##
       - ${CONFIG_POSTGRESQL:-./docker/config/postgresql/postgresql.conf}:/var/lib/postgresql/postgresql.conf
@@ -208,9 +211,41 @@ services:
       - POSTGRES_VERSION=${POSTGRES_VERSION:-14.6}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-MyP4ssw0rd}
-  #   - PGDATA=${PGDATA:-/var/lib/postgresql/pgdata}
+    #   - PGDATA=${PGDATA:-/var/lib/postgresql/pgdata}
     privileged: true
     tty: true
     networks:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_POSTGRESQL:-172.146.146.6}
+
+  #================================================================================================
+  # OPENFORTIVPN
+  #================================================================================================
+  openfortivpn:
+    image: devopscorner/openfortivpn:${OPENFORTIVPN_VERSION:-22.04}
+    # build:
+    #   context: ./openfortivpn
+    #   dockerfile: Dockerfile
+    container_name: ${CONTAINER_OPENFORTIVPN:-devopscorner_openfortivpn}
+    restart: unless-stopped
+    hostname: myopenfortivpn
+    environment:
+      - OPENFORTIVPN_VERSION=${OPENFORTIVPN_VERSION:-22.04}
+      - VPN_HOST=host
+      - VPN_PORT=port
+      - VPN_ADDR=host:port
+      - VPN_USER=user@domain
+      - VPN_PASS=secret
+      - VPN_TRUST_CERT=1234567890987654321
+      - VPN_TIMEOUT=${VPNTIMEOUT:-10}
+    volumes:
+      # - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
+      - /var/run/docker.sock:/var/run/docker.sock ## Do not use it in k8s
+      - vol_openfortivpn:/data
+    ports:
+      - 5214:8080 # HTTP
+      - 5215:8443 # HTTPS
+    privileged: true
+    networks:
+      devopscorner_net:
+        ipv4_address: ${CONTAINER_IP_OPENFORTIVPN:-172.146.146.105}

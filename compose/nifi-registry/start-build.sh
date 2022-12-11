@@ -39,3 +39,5 @@ TAG="1.18-ubuntu"
 echo " Build Image => $IMAGE:$TAG"
 docker build --no-cache -f Dockerfile-1.18 -t $IMAGE:$TAG .
 echo ""
+
+echo "-- ALL DONE --"

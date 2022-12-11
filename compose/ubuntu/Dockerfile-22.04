@@ -62,7 +62,7 @@ RUN apt-get install -y \
 
 RUN chmod +x /tmp/*.sh
 
-RUN apt-get clean; sync
+RUN apt-get clean -q && apt-get autoremove --purge; sync
 
 WORKDIR /root
 

@@ -42,6 +42,80 @@ Container Nifi & Nifi Registry
   - [EKS Staging](terraform-state-eks-staging.md)
   - [EKS Production](terraform-state-eks-prod.md)
 
+- Terraform Docs Generator with `terraform-docs`, download [this](https://github.com/terraform-docs/terraform-docs/) binary
+  - [Terraform Infra Core](README-Terraform-Infra-Core.md)
+    ```
+    cd terraform/environment/providers/aws/infra/core
+
+    touch ../../../../../../docs/README-Terraform-Infra-Core.md
+
+    terraform-docs markdown table --output-file ../../../../../../docs/README-Terraform-Infra-Core.md --output-mode inject .
+    ```
+
+  - [Terraform Infra TFState](README-Terraform-Infra-TFState.md)
+    ```
+    cd terraform/environment/providers/aws/infra/tfstate
+
+    touch ../../../../../../docs/README-Terraform-Infra-TFState.md
+
+    terraform-docs markdown table --output-file ../../../../../../docs/README-Terraform-Infra-TFState.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources Budget](README-Terraform-Infra-Resources-Budget.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/budget
+
+    touch ../../../../../../../docs/README-Terraform-Infra-Resources-Budget.md
+
+    terraform-docs markdown table --output-file ../../../../../../../docs/README-Terraform-Infra-Resources-Budget.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources EC2 Jumphost](README-Terraform-Infra-Resources-EC2-Jumphost.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/ec2/jumphost
+
+    touch ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Jumphost.md
+
+    terraform-docs markdown table --output-file ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Jumphost.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources EC2 Nifi](README-Terraform-Infra-Resources-EC2-Nifi.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/ec2/nifi
+
+    touch ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Nifi.md
+
+    terraform-docs markdown table --output-file ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Nifi.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources EC2 PSQL](README-Terraform-Infra-Resources-EC2-PSQL.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/ec2/psql
+
+    touch ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-PSQL.md
+
+    terraform-docs markdown table --output-file ../../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-PSQL.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources EKS Nifi](README-Terraform-Infra-Resources-EKS-Nifi.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/eks
+
+    touch ../../../../../../../docs/README-Terraform-Infra-Resources-EKS-Nifi.md
+
+    terraform-docs markdown table --output-file ../../../../../../../docs/README-Terraform-Infra-Resources-EKS-Nifi.md --output-mode inject .
+    ```
+
+  - [Terraform Infra Resources RDS NifiDB](README-Terraform-Infra-Resources-RDS-NifiDB.md)
+    ```
+    cd terraform/environment/providers/aws/infra/resources/rds/nifidb
+
+    touch ../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Nifi.md
+
+    terraform-docs markdown table --output-file ../../../../../../../../docs/README-Terraform-Infra-Resources-EC2-Nifi.md --output-mode inject .
+    ```
+
+
 - Ansible Nifi
   - [Ansible Setup](README-Ansible.md)
   - [Ansible Deployment](Deploy-Ansible.md)

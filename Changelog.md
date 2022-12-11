@@ -22,8 +22,11 @@ Container Nifi & Nifi Registry
 
 ## Version 0.10
 
+- All features from version 0.9
+- Added docs from `terraform-docs` generator
 - Refactoring script dockerhub-build, dockerhub-tag, dockerhub-push
 - Refactoring script ecr-build, ecr-tag, ecr-push
+- Refactoring makefile for running build, tag, push & pull
 
 ---
 

@@ -37,8 +37,8 @@ docker_push() {
 
 main() {
   login_ecr
-  # docker_push [AWS_ACCOUNT] devopscorner/nifi [alpine|ubuntu|codebuild|version|latest|tags|custom-tags]
-  # docker_push [AWS_ACCOUNT] devopscorner/nifi-registry [alpine|ubuntu|codebuild|version|latest|tags|custom-tags]
+  # docker_push [AWS_ACCOUNT] devopscorner/nifi [alpine|ubuntu|version|latest|tags|custom-tags]
+  # docker_push [AWS_ACCOUNT] devopscorner/nifi-registry [alpine|ubuntu|version|latest|tags|custom-tags]
   docker_push $1 $2 $3
   echo ''
   echo '-- ALL DONE --'
@@ -48,4 +48,4 @@ main() {
 main $1 $2 $3
 
 ### How to Execute ###
-# ./ecr-push.sh [AWS_ACCOUNT] [ECR_PATH] [alpine|ubuntu|codebuild|version|latest|tags|custom-tags]
+# ./ecr-push.sh [AWS_ACCOUNT] [ECR_PATH] [alpine|ubuntu|version|latest|tags|custom-tags]

@@ -94,6 +94,10 @@ python3 -m pip install pip==21.3.1 &&
 
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
+# Cleanup Cache
+sudo apt-get clean &&
+    sudo apt-get autoremove -y
+
 ## install tfenv
 git clone https://github.com/tfutils/tfenv.git ~/.tfenv
 echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >>~/.bash_profile
@@ -101,25 +105,6 @@ ln -sf ~/.tfenv/bin/* /usr/local/bin
 mkdir -p ~/.local/bin/
 . ~/.profile
 ln -sf ~/.tfenv/bin/* ~/.local/bin
-
-# Cleanup Cache
-sudo apt-get clean &&
-    sudo apt-get autoremove -y
-
-##### CUSTOMIZE ~/.profile #####
-echo '' >>~/.profile
-echo '### Docker ###
-export DOCKER_CLIENT_TIMEOUT=300
-export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
-
-##### CONFIGURE DOCKER #####
-sudo usermod -a -G docker ubuntu
-
-sudo ln -snf $DOCKER_PATH /usr/bin/dock
-sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
-
-sudo systemctl enable docker.service
-sudo systemctl start docker.service
 
 ##### CONFIGURE CodeDeploy #####
 # wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
@@ -197,6 +182,20 @@ echo UUID=$(blkid -o value -s UUID /dev/nvme4n1) /opt/data ext4 defaults,nofail 
 
 mount -a
 
+## Change Permission ##
+chown -R ubuntu:ubuntu $NIFI_HOME/nifi-${NIFI_VERSION}
+chown -R ubuntu:ubuntu $NIFI_HOME/nifi-registry-${NIFI_VERSION}
+
+mkdir -p /opt/data/docker/portainer2.9
+mkdir -p /opt/data/docker/nifi-${NIFI_VERSION}
+mkdir -p /opt/data/docker/nifi-registry-${NIFI_VERSION}
+mkdir -p /opt/data/docker/postgresql12.8/pgdata
+mkdir -p /opt/data/docker/postgresql14.6/pgdata
+mkdir -p /opt/data/docker/openfortivpn22.04
+
+chown -R ubuntu:ubuntu /opt/data/docker
+chmod 777 /opt/data/docker
+
 ## Execute Install Libraries ##
 # curl -s http://server/path/script.sh | bash -s arg1 arg2
 curl -s https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/get-jdbc-nifi-ubuntu.sh | bash
@@ -205,3 +204,23 @@ curl -o $NIFI_HOME/nifi-psql.yml \
     https://raw.githubusercontent.com/devopscorner/nifi/master/scripts/nifi-psql-images-ubuntu.yml
 
 cd $NIFI_HOME && docker-compose -f nifi-psql.yml up -d
+
+##### CUSTOMIZE ~/.profile #####
+echo '' >>~/.profile
+echo '### Docker ###
+export DOCKER_CLIENT_TIMEOUT=300
+export COMPOSE_HTTP_TIMEOUT=300' >>~/.profile
+
+##### CONFIGURE DOCKER #####
+## Create Folder Docker
+mkdir -p /opt/data/lib/docker
+## Symlink Folder Docker
+ln -sf /opt/data/lib/docker /var/lib/docker
+
+sudo usermod -a -G docker ubuntu
+
+sudo ln -snf $DOCKER_PATH /usr/bin/dock
+sudo ln -snf $DOCKER_COMPOSE_PATH /usr/bin/dcomp
+
+sudo systemctl enable docker.service
+sudo systemctl start docker.service

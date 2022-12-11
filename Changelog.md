@@ -19,11 +19,33 @@ Container Nifi & Nifi Registry
 - Unified Machine Learning (ML) Framework with [Ivy](https://github.com/unifyai/ivy)
 
 ---
+
+## Version 0.10
+
+- Refactoring script dockerhub-build, dockerhub-tag, dockerhub-push
+- Refactoring script ecr-build, ecr-tag, ecr-push
+
+---
+
+## Version 0.9
+
+- Added FortiClient VPN container for multinetwork bridge (cloud network & onprem)
+
+---
+## Version 0.8
+
+- Upgrade PostgreSQL nifi container to 14.6
+- Fixing partition lifecycle terraform nifi
+- Update setup bootstrap userdata ec2 nifi
+
+---
+
 ## Version 0.7
 
 - Refactoring remove unused scripts
 
 ---
+
 ## Version 0.6
 
 - Refactoring path images from docker-compose nifi
@@ -32,6 +54,7 @@ Container Nifi & Nifi Registry
 - Setup additional volume (EBS attachment) for spesific Nifi folder & docker container
 
 ---
+
 ## Version 0.5
 
 - Added Ansible Service Pattern for Provisioning Nifi with VM (Virtual Machine) / Instances EC2

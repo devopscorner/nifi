@@ -38,13 +38,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ${DATA_POSTGRESQL:-/opt/data/docker/postgresql14.6/pgdata}
-  vol_openfortivpn:
-    driver: ${VOLUMES_DRIVER:-local}
-    driver_opts:
-      o: bind
-      type: none
-      device: ${DATA_OPENFORTIVPN:-/opt/data/docker/openfortivpn22.04}
+      device: ${DATA_POSTGRESQL:-/opt/data/docker/postgresql12.8/pgdata}
 
 services:
 #================================================================================================
@@ -59,7 +53,7 @@ services:
       - "${PORT_PORTAINER:-5213}:9000"
     volumes:
   #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-      - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
+  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
       - vol_portainer:/data
     environment:
       - PORTAINER_TEMPLATE=generic
@@ -214,32 +208,3 @@ services:
     networks:
       devopscorner_net:
         ipv4_address: ${CONTAINER_IP_POSTGRESQL:-172.146.146.6}
-
-#================================================================================================
-# OPENFORTIVPN
-#================================================================================================
-  openfortivpn:
-    image: devopscorner/openfortivpn:${OPENFORTIVPN:-22.04}
-    # build:
-    #   context: ./openfortivpn
-    #   dockerfile: Dockerfile
-    container_name: ${CONTAINER_OPENFORTIVPN:-devopscorner_openfortivpn}
-    restart: unless-stopped
-    hostname: myopenfortivpn
-    environment:
-      - OPENFORTIVPN_VERSION=${OPENFORTIVPN_VERSION:-22.04}
-      - VPNADDR=host:port
-      - VPNUSER=me@domain
-      - VPNPASS=secret
-      - VPNTIMEOUT=${VPNTIMEOUT:-10}
-    volumes:
-  #   - /etc/localtime:/etc/localtime:ro           ## Do not use it in mac
-  #   - /var/run/docker.sock:/var/run/docker.sock  ## Do not use it in k8s
-      - vol_openfortivpn:/data
-    ports:
-      - 5414:8080    # HTTP
-      - 5415:8443    # HTTPS
-    privileged: true
-    networks:
-      devopscorner_net:
-        ipv4_address: ${CONTAINER_IP_OPENFORTIVPN:-172.146.146.105}

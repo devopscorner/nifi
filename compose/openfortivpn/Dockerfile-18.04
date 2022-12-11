@@ -1,4 +1,4 @@
-FROM ubuntu:${UBUNTU_VERSION:-16.04}
+FROM ubuntu:${UBUNTU_VERSION:-18.04}
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -7,16 +7,18 @@ ARG GIT_URL
 
 ENV VENDOR="DevOpsCornerId"
 ENV AUTHOR="DevOpsCorner.id <support@devopscorner.id>"
-ENV IMG_NAME="ubuntu"
-ENV IMG_VERSION="16.04"
-ENV IMG_DESC="Docker Image Ubuntu 16.04"
+ENV IMG_NAME="openfortivpn"
+ENV IMG_VERSION="18.04"
+ENV IMG_DESC="Docker Image OpenFortiVPN from Ubuntu 18.04"
 ENV IMG_ARCH="amd64/x86_64"
 
-ENV UBUNTU_VERSION="16.04"
+ENV UBUNTU_VERSION="18.04"
+ENV OPENFORTIVPN_VERSION="1.19.0"
 
 LABEL maintainer="$AUTHOR" \
       architecture="$IMG_ARCH" \
       ubuntu-version="$UBUNTU_VERSION" \
+      openfortivpn-version="$OPENFORTIVPN_VERSION" \
       org.label-schema.build-date="$BUILD_DATE" \
       org.label-schema.name="$IMG_NAME" \
       org.label-schema.description="$IMG_DESC" \
@@ -36,9 +38,15 @@ LABEL maintainer="$AUTHOR" \
       fr.hbis.docker.base.vendor="$VENDOR" \
       fr.hbis.docker.base.version="$BUILD_VERSION"
 
-COPY rootfs /
-
 ENV DEBIAN_FRONTEND noninteractive
+
+ENV VPN_HOST host
+ENV VPN_PORT port
+ENV VPN_ADDR host:port
+ENV VPN_USER user@domain
+ENV VPN_PASS secret
+ENV VPN_TRUST_CERT 1234567890987654321
+ENV VPN_TIMEOUT 10
 
 USER root
 RUN apt -o APT::Sandbox::User=root update; sync
@@ -53,17 +61,24 @@ RUN apt-get install -y \
       openssh-server \
       openssh-client \
       net-tools \
-      vim-tiny \
-      nano \
-      zip \
-      unzip \
-      python3-minimal \
+      expect \
+      iproute2 \
+      iptables \
+      openfortivpn \
+      gettext-base \
+      network-manager-fortisslvpn \
       iputils-ping; sync
 
-RUN chmod +x /tmp/*.sh
+COPY rootfs /
+RUN chmod +x /tmp/*.sh; sync
+
+# Copy runfiles
+COPY rootfs/tmp/start.sh /start.sh
 
 RUN apt-get clean -q && apt-get autoremove --purge; sync
 
 WORKDIR /root
+
+CMD [ "/start.sh" ]
 
 EXPOSE 22

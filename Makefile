@@ -77,12 +77,13 @@ git-clone:
 #   BUILD CONTAINER   #
 # =================== #
 .PHONY: dockerhub-build-nifi dockerhub-build-nifi-registry ecr-build-nifi ecr-build-nifi-registry
+# ./dockerhub-build.sh Dockerfile [DOCKERHUB_IMAGE_PATH] [alpine|ubuntu|codebuild] [version|latest|tags] [custom-tags]
 dockerhub-build-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Create Container Image Nifi (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./dockerhub-build.sh nifi Dockerfile-Nifi ${NIFI_VERSION} $(CI_PATH)
+	@sh ./dockerhub-build.sh Dockerfile-Nifi devopscorner/nifi ${NIFI_VERSION}
 	@echo '- DONE -'
 
 dockerhub-build-nifi-registry:
@@ -90,15 +91,16 @@ dockerhub-build-nifi-registry:
 	@echo " Task      : Create Container Image Nifi Registry (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./dockerhub-build.sh nifi-registry Dockerfile-Nifi-Registry ${NIFI_REGISTRY_VERSION} $(CI_PATH)
+	@sh ./dockerhub-build.sh Dockerfile-Nifi-Registry devopscorner/nifi-registry ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
+# ./ecr-build.sh [AWS_ACCOUNT] Dockerfile [ECR_PATH] [alpine|ubuntu|codebuild] [version|latest|tags] [custom-tags]
 ecr-build-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Create Container Image Nifi (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-build.sh $(ARGS) nifi Dockerfile-Nifi ${NIFI_VERSION} $(CI_PATH)
+	@sh ./ecr-build.sh $(ARGS) Dockerfile-Nifi $(CI_PATH) ${NIFI_VERSION}
 	@echo '- DONE -'
 
 ecr-build-nifi-registry:
@@ -106,19 +108,21 @@ ecr-build-nifi-registry:
 	@echo " Task      : Create Container Image Nifi Registry (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-build.sh $(ARGS) nifi-registry Dockerfile-Nifi-Registry ${NIFI_REGISTRY_VERSION} $(CI_PATH)
+	@sh ./ecr-build.sh $(ARGS) Dockerfile-Nifi-Registry $(CI_PATH) ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
 # ================== #
 #   TAGS CONTAINER   #
 # ================== #
 .PHONY: dockerhub-tag-nifi dockerhub-tag-nifi-registry ecr-tag-nifi ecr-tag-nifi-registry
+
+# ./dockerhub-tag.sh [DOCKERHUB_IMAGE_PATH] [alpine|ubuntu] [version|latest|tags] [custom-tags]
 dockerhub-tag-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Set Tags Image Nifi (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./dockerhub-tag.sh nifi ${NIFI_VERSION} $(CI_PATH)
+	@sh ./dockerhub-tag.sh $(CI_PATH) ${NIFI_VERSION}
 	@echo '- DONE -'
 
 dockerhub-tag-nifi-registry:
@@ -126,15 +130,16 @@ dockerhub-tag-nifi-registry:
 	@echo " Task      : Set Tags Image Nifi Registry (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./dockerhub-tag.sh nifi-registry ${NIFI_REGISTRY_VERSION} $(CI_PATH)
+	@sh ./dockerhub-tag.sh $(CI_PATH) ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
+# ./ecr-tag.sh [AWS_ACCOUNT] [ECR_PATH] [alpine|ubuntu] [version|latest|tags] [custom-tags]
 ecr-tag-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Set Tags Image Nifi (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-tag.sh $(ARGS) nifi ${NIFI_VERSION} $(CI_PATH)
+	@sh ./ecr-tag.sh $(ARGS) $(CI_PATH) ${NIFI_VERSION}
 	@echo '- DONE -'
 
 ecr-tag-nifi-registry:
@@ -142,19 +147,21 @@ ecr-tag-nifi-registry:
 	@echo " Task      : Set Tags Image Nifi Registry (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-tag.sh $(ARGS) nifi-registry ${NIFI_REGISTRY_VERSION} $(CI_PATH)
+	@sh ./ecr-tag.sh $(ARGS) $(CI_PATH) ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
 # ================== #
 #   PUSH CONTAINER   #
 # ================== #
 .PHONY: dockerhub-push-nifi dockerhub-push-nifi-registry ecr-push-nifi ecr-push-nifi-registry
+
+# ./dockerhub-push.sh [DOCKERHUB_IMAGE_PATH] [alpine|ubuntu|codebuild|version|latest|tags|custom-tags]
 dockerhub-push-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Push Container Image Nifi (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./dockerhub-push.sh nifi $(CI_PATH)
+	@sh ./dockerhub-push.sh $(CI_PATH) ubuntu ${NIFI_VERSION}
 	@echo '- DONE -'
 
 dockerhub-push-nifi-registry:
@@ -162,15 +169,16 @@ dockerhub-push-nifi-registry:
 	@echo " Task      : Push Container Image Nifi Registry (DockerHub) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-push.sh nifi-registry $(CI_PATH)
+	@sh ./dockerhub-push.sh $(CI_PATH) ubuntu ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
+# ./ecr-push.sh [AWS_ACCOUNT] [ECR_PATH] [alpine|ubuntu|codebuild|version|latest|tags|custom-tags]
 ecr-push-nifi:
 	@echo "=============================================================="
 	@echo " Task      : Push Container Image Nifi (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-push.sh $(ARGS) nifi $(CI_PATH)
+	@sh ./ecr-push.sh $(ARGS) $(CI_PATH) ubuntu ${NIFI_VERSION}
 	@echo '- DONE -'
 
 ecr-push-nifi-registry:
@@ -178,7 +186,7 @@ ecr-push-nifi-registry:
 	@echo " Task      : Push Container Image Nifi Registry (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-push.sh $(ARGS) nifi-registry $(CI_PATH)
+	@sh ./ecr-push.sh $(ARGS) $(CI_PATH) ubuntu ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
 # ================== #
@@ -190,7 +198,7 @@ ecr-pull-nifi:
 	@echo " Task      : Pull Container Image Nifi (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-pull.sh $(ARGS) nifi $(CI_PATH)
+	@sh ./ecr-pull.sh $(ARGS) $(CI_PATH) ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
 ecr-pull-nifi-registry:
@@ -198,7 +206,7 @@ ecr-pull-nifi-registry:
 	@echo " Task      : Pull Container Image Nifi Registry (ECR) "
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
-	@sh ./ecr-pull.sh $(ARGS) nifi-registry $(CI_PATH)
+	@sh ./ecr-pull.sh $(ARGS) $(CI_PATH) ${NIFI_REGISTRY_VERSION}
 	@echo '- DONE -'
 
 # =========================== #

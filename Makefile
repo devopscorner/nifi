@@ -10,7 +10,7 @@
 export PATH_APP=`pwd`
 export PATH_WORKSPACE="src"
 export PATH_SCRIPT="scripts"
-export PATH_COMPOSE="."
+export PATH_COMPOSE="compose"
 export PATH_DOCKER="."
 export PROJECT_NAME="nifi"
 export TF_PATH="terraform/environment/providers/aws/infra"
@@ -36,7 +36,7 @@ export NIFI_REGISTRY_VERSION=1.18.0
 # =============== #
 #   GET MODULES   #
 # =============== #
-.PHONY: sub-officials sub-community sub-all
+.PHONY: sub-officials sub-community sub-all codebuild-modules
 sub-officials:
 	@echo "=============================================================="
 	@echo " Task      : Get Official Submodules "
@@ -61,6 +61,13 @@ sub-all:
 	@echo '---'
 	@echo '- ALL DONE -'
 
+codebuild-modules:
+	@echo "=============================================================="
+	@echo " Task      : Get CodeBuild Modules "
+	@echo " Date/Time : `date` "
+	@echo "=============================================================="
+	@./get-modules-codebuild.sh
+
 # ==================== #
 #   CLONE REPOSITORY   #
 # ==================== #
@@ -71,6 +78,34 @@ git-clone:
 	@echo " Date/Time : `date` "
 	@echo "=============================================================="
 	@./git-clone.sh $(SOURCE) $(TARGET)
+	@echo '- DONE -'
+
+# ================== #
+#   DOCKER-COMPOSE   #
+# ================== #
+.PHONY: run stop remove
+run:
+	@echo "========================================================"
+	@echo " Task      : Docker Container "
+	@echo " Date/Time : `date`"
+	@echo "========================================================"
+	@./run-docker.sh
+	@echo '- DONE -'
+
+stop:
+	@echo "========================================================"
+	@echo " Task      : Stopping Docker Container "
+	@echo " Date/Time : `date`"
+	@echo "========================================================"
+	@docker-compose -f ${PATH_COMPOSE}/nifi-psql.yml stop
+	@echo '- DONE -'
+
+remove:
+	@echo "========================================================"
+	@echo " Task      : Remove Docker Container "
+	@echo " Date/Time : `date`"
+	@echo "========================================================"
+	@docker-compose -f ${PATH_COMPOSE}/nifi-psql.yml down
 	@echo '- DONE -'
 
 # =================== #

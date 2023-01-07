@@ -20,7 +20,7 @@ locals {
 
 resource "aws_eks_node_group" "nifi" {
   ## NODE GROUP
-  for_each = (local.env == "staging" ? toset(["dev", "uat"]) : toset(["prod"]))
+  for_each = (local.env == "prod" ? toset(["prod"]) : toset(["dev", "uat"]))
 
   cluster_name    = aws_eks_cluster.aws_eks.name
   node_group_name = "${local.node_selector_nifi}-${each.key}-node"
@@ -33,7 +33,7 @@ resource "aws_eks_node_group" "nifi" {
     data.terraform_remote_state.core_state.outputs.eks_private_1c[0]
   ]
 
-  instance_types = local.env == "staging" ? ["t3.medium"] : ["m5.large"]
+  instance_types = local.env == "prod" ? ["m5.large"] : ["t3.medium"]
   disk_size      = 100
   version        = var.k8s_version[local.env]
 
@@ -96,10 +96,10 @@ resource "aws_eks_node_group" "nifi" {
 #  Target Group
 # ------------------------------------
 resource "aws_lb_target_group" "nifi" {
-  for_each = (local.env == "staging" ? toset(["dev", "uat"]) : toset(["prod"]))
+  for_each = (local.env == "prod" ? toset(["prod"]) : toset(["dev", "uat"]))
 
-  name     = "devopscorner-tg-${local.node_selector_nifi}-${each.key}"
-  port     = 30080
+  name     = "tg-${local.node_selector_nifi}-${var.env[local.env]}-${each.key}"
+  port     = "${each.key}" == "dev" ? 30780 : 30880
   protocol = "HTTP"
   vpc_id   = data.terraform_remote_state.core_state.outputs.vpc_id
 

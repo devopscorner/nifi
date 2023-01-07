@@ -20,6 +20,16 @@ Container Nifi & Nifi Registry
 
 ---
 
+## Version 0.11
+
+- All features from version 0.10
+- Refactoring path for all dockerfile in `docker` folder
+- Added custom config for
+  - mariadb
+  - postgresql
+
+---
+
 ## Version 0.10
 
 - All features from version 0.9
@@ -35,6 +45,7 @@ Container Nifi & Nifi Registry
 - Added FortiClient VPN container for multinetwork bridge (cloud network & onprem)
 
 ---
+
 ## Version 0.8
 
 - Upgrade PostgreSQL nifi container to 14.6

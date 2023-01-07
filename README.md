@@ -3,7 +3,7 @@
 ![all contributors](https://img.shields.io/github/contributors/devopscorner/nifi)
 ![tags](https://img.shields.io/github/v/tag/devopscorner/nifi?sort=semver)
 ![download all](https://img.shields.io/github/downloads/devopscorner/nifi/total.svg)
-![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.10/total)
+![download latest](https://img.shields.io/github/downloads/devopscorner/nifi/0.11/total)
 ![view](https://views.whatilearened.today/views/github/devopscorner/nifi.svg)
 ![clone](https://img.shields.io/badge/dynamic/json?color=success&label=clone&query=count&url=https://raw.githubusercontent.com/devopscorner/nifi/master/clone.json?raw=True&logo=github)
 ![issues](https://img.shields.io/github/issues/devopscorner/nifi)
@@ -13,6 +13,7 @@
 [![license](https://img.shields.io/github/license/devopscorner/nifi)](https://img.shields.io/github/license/devopscorner/nifi)
 
 Container Nifi & Nifi Registry
+
 - Provisioning with Terraform & Ansible
 - EC2 Docker Compose & Kubernetes (EKS)
 - Python3 & Libraries
@@ -30,9 +31,9 @@ Container Nifi & Nifi Registry
 
 ## Available Tags
 
-| Containers  | Pulls |
-|-------------|-------|
-| Container `devopscorner/nifi` [Tags](docs/README-Nifi.md) | [![nifi pulls](https://img.shields.io/docker/pulls/devopscorner/nifi.svg?label=nifi%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi/) |
+| Containers                                                                  | Pulls                                                                                                                                                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Container `devopscorner/nifi` [Tags](docs/README-Nifi.md)                   | [![nifi pulls](https://img.shields.io/docker/pulls/devopscorner/nifi.svg?label=nifi%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi/)                                     |
 | Container `devopscorner/nifi-registry` [Tags](docs/README-Nifi-Registry.md) | [![nifi-registry pulls](https://img.shields.io/docker/pulls/devopscorner/nifi-registry.svg?label=nifi-registry%20pulls&logo=docker)](https://hub.docker.com/r/devopscorner/nifi-registry/) |
 
 ## Features
@@ -94,6 +95,7 @@ Ansible Services Pattern:
 - Ansible Static & Dynamic Inventory
 
 - Playbooks Group by Services
+
   - Datadog
   - Docker
   - Java
@@ -109,7 +111,6 @@ Ansible Services Pattern:
   - Java
   - Kubectl
 
-
 ## Terraform Features
 
 Multi Environment Workspace:
@@ -117,6 +118,7 @@ Multi Environment Workspace:
 - Remote State Terraform (S3 & DynamoDB)
 
 - Core Infrastructure
+
   - VPC
   - Subnet EC2 & EKS
   - Security Group

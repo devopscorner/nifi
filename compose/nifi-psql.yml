@@ -75,7 +75,7 @@ services:
   nifi:
     #image: devopscorner/nifi:${NIFI_VERSION:-1.18.0}
     build:
-      context: ./nifi
+      context: docker/nifi
       dockerfile: Dockerfile
     container_name: ${CONTAINER_NIFI:-devopscorner_nifi}
     restart: unless-stopped
@@ -126,7 +126,7 @@ services:
   nifi-registry:
     #image: devopscorner/nifi-registry:${NIFI_REGISTRY_VERSION:-1.18.0}
     build:
-      context: ./nifi-registry
+      context: docker/nifi-registry
       dockerfile: Dockerfile
     container_name: ${CONTAINER_NIFI_REGISTRY:-devopscorner_nifi_registry}
     restart: unless-stopped
@@ -222,9 +222,9 @@ services:
   # OPENFORTIVPN
   #================================================================================================
   openfortivpn:
-    # image: devopscorner/openfortivpn:${OPENFORTIVPN_VERSION:-22.04}
+    #image: devopscorner/openfortivpn:${OPENFORTIVPN_VERSION:-22.04}
     build:
-      context: ./openfortivpn
+      context: docker/openfortivpn
       dockerfile: Dockerfile
     container_name: ${CONTAINER_OPENFORTIVPN:-devopscorner_openfortivpn}
     restart: unless-stopped

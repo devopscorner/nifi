@@ -14,8 +14,8 @@ HELM_TEMPLATE="api \
   stateful \
   svcrole
 "
-HELM_REPO_PATH="s3://devopscorner-helm-chart/lab"
-HELM_REPO_NAME="devopscorner-lab"
+HELM_REPO_PATH="s3://devopscorner-adot-chart/lab"
+HELM_REPO_NAME="devopscorner-adot-lab"
 
 COL_RED="\033[22;31m"
 COL_GREEN="\033[22;32m"

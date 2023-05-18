@@ -38,10 +38,6 @@ spec:
           env:
             {{- toYaml .Values.application.env | nindent 12 }}
           {{- end }}
-          {{- if .Values.envFrom.enabled }}
-          envFrom:
-            {{- toYaml .Values.envFrom.envFrom | nindent 12 }}
-          {{- end }}
           {{- if .Values.container }}
           ports:
           {{- with .Values.container.ports }}

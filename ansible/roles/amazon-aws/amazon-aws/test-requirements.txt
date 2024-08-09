@@ -4,3 +4,4 @@ mock
 pytest-xdist
 # We should avoid these two modules with py3
 pytest-mock
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:1.7.2
+FROM hashicorp/terraform:1.9.4
 
 ENV PYTHONUNBUFFERED=1
 
@@ -20,4 +20,3 @@ RUN mkdir -p terraform
 WORKDIR terraform
 
 ENTRYPOINT ["terraform"]
-

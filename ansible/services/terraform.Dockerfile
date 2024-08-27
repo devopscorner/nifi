@@ -20,4 +20,3 @@ RUN mkdir -p terraform
 WORKDIR terraform
 
 ENTRYPOINT ["terraform"]
-

@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:1.9.4
+FROM hashicorp/terraform:1.10.1
 
 ENV PYTHONUNBUFFERED=1
 

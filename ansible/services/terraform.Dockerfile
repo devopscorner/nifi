@@ -1,4 +1,5 @@
-FROM hashicorp/terraform:1.14.4
+FROM hashicorp/terraform:1.14.5
+
 ENV PYTHONUNBUFFERED=1
 
 RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python

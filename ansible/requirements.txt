@@ -30,3 +30,4 @@ zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 protobuf>=4.25.8 # not directly required, pinned by Snyk to avoid a vulnerability
 cryptography>=46.0.5 # not directly required, pinned by Snyk to avoid a vulnerability
 pyasn1>=0.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
+idna>=3.15 # not directly required, pinned by Snyk to avoid a vulnerability
